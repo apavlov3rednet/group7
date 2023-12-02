@@ -231,15 +231,12 @@
     ownersDB = [];
 
     for(let i in owners) {
-        console.log(owners[i])
         let name = owners[i].name,
             lastName = owners[i].lastName;
 
         ownersDB.push(Owner.setName(name, lastName));
     }
 
-    console.log(ownersDB);
-    
     
 
     // DataBase.setValue('owner', own);
