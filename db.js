@@ -1,6 +1,6 @@
-class DB
+export class DB
 {
-    static #PORT = '80';
+    static #PORT = '27017';
     static #LOCATION = 'mongodb://localhost';
     static #LOGIN;
     static #PSSWD;
@@ -9,20 +9,20 @@ class DB
     constructor() {}
 
     Init() {
-        let db = MongoDB.init(DB.#LOCATION, DB.#PORT, DB.#LOGIN, DB.#PSSWD);
-        let dbName = db.getDataBase(DB.#DBNAME);
+        const MongoClient = require(DB.#DBNAME).MongoClient;
+        const url = [DB.#LOCATION, DB.#PORT].join(':'); // mongodb://localhost:27017
 
-        this.db = dbName;
-    }
-
-    Close() {
-        this.db.close();
+        this.mongoClient = new MongoClient(url);
+        this.client = this.mongoClient.connect(); // LOGIN & PSSWD
+        this.db = client.db(DB.#DBNAME);
     }
 
     static getValue(key) {
         //this.Init();
 
         let value  = window.localStorage.getItem(key);
+
+        //this.mongoClient.close();
 
         if(this.isJson(value))
             return JSON.parse(value);
@@ -47,11 +47,14 @@ class DB
                 this.removeValue(key);
  
         window.localStorage.setItem(key, JSON.stringify(value));
+        //this.mongoClient.close();
     }
 
     static removeValue(key) {
         //this.Init();
         if(confirm('Удалить?')) 
             window.localStorage.removeItem(key);
+
+            //this.mongoClient.close();
     }
 }
