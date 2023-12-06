@@ -5,7 +5,7 @@ export class DOM
          * @param {className = '', attrs{}, styles{}, events{}, children[]} params 
          * @returns 
          */
-    create(tagName = '', params = {}) {
+    static create(tagName = '', params = {}) {
         if(!tagName)
             return false;
 
@@ -43,7 +43,7 @@ export class DOM
         return element;
     }
 
-    adjust(element = {}, params = {}) {
+    static adjust(element = {}, params = {}) {
         if(Object.keys(element).length == 0) 
             return false;
 
@@ -77,11 +77,11 @@ export class DOM
             }
     }
 
-    removeStyle(element) {
+    static removeStyle(element) {
         element.removeAttribute('style');
     }
 
-    clearItem(element = {}, all = false) {
+    static clearItem(element = {}, all = false) {
         element.innerHTML = '';
 
         if(all) {
@@ -98,7 +98,7 @@ export class DOM
      * @param {*} element 
      * @param {*} total - при true полное удаление, false - очистка
      */
-    removeItem(element = {}, total = false) {
+    static removeItem(element = {}, total = false) {
         if(total) {
             element.remove();
         }

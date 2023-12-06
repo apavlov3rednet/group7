@@ -1,4 +1,4 @@
-export class DB
+class DB
 {
     static #PORT = '27017';
     static #LOCATION = 'mongodb://localhost';
