@@ -1,6 +1,6 @@
 (function() {
     let obOwnerForm = document.getElementById('owner');
-    let arOwners = [];
+    let arOwners = DB.getValue('owners') || [];
 
     obOwnerForm.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -17,10 +17,7 @@
             owner.set(params);
         });
 
-        let obOwner = new Owner(owner.data);
-        arOwners.push(obOwner);
-
-        console.log(arOwners);
+        arOwners.push(owner);
 
         DB.setValue('owners', arOwners);
     });

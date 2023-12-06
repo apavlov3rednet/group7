@@ -30,7 +30,7 @@ class DB
         return value;
     }
 
-    isJson(value) {
+    static isJson(value) {
         try {
             JSON.parse(value);
         }
