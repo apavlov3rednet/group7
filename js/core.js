@@ -2,12 +2,16 @@
   let obOwnerForm = document.getElementById("owner");
   let obCardForm = document.getElementById("card");
   let obBrandForm = document.getElementById("brand");
+  let obModelForm = document.getElementById("model");
 
   let selectOwner = obCardForm.querySelector("[name=OWNER]");
   let selectBrand = obCardForm.querySelector('[name=BRAND]');
-
+  let selectModel = obCardForm.querySelector('[name=MODEL]');
+  let selectModelBrand = obModelForm.querySelector('[name=BRAND]');
+  
   let arOwners = DB.getValue("owners") || [];
   let arBrands = DB.getValue('brands') || [];
+  let arModel = DB.getValue('models') || [];
 
   function updateSelect(select, ar, titleChoice = 'Выберите') {
     let children = [];
@@ -78,10 +82,33 @@
     DB.setValue("brands", arBrands);
 
     updateSelect(selectBrand, arBrands);
+    updateSelect(selectModelBrand, arBrands);
+  });
+
+  obModelForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    let model = new Model();
+
+    let arFields = obModelForm.querySelectorAll("input");
+
+    arFields.forEach((item) => {
+      let params = {};
+
+      params[item.name] = item.value;
+
+      model.set(params);
+    });
+
+    arModel.push(model);
+
+    DB.setValue("models", arModel);
+
+    updateSelect(selectModel, arModel);
   });
 
   updateSelect(selectOwner, arOwners, 'Выберите владельца');
   updateSelect(selectBrand, arBrands);
-
+  updateSelect(selectModelBrand, arBrands);
+  updateSelect(selectModel, arModel);
 
 })(window);
