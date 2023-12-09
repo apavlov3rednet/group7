@@ -8,7 +8,7 @@ class DB
 
     constructor() {}
 
-    Init() {
+    static Init() {
         const MongoClient = require(DB.#DBNAME).MongoClient;
         const url = [DB.#LOCATION, DB.#PORT].join(':'); // mongodb://localhost:27017
 
