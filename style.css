@@ -11,6 +11,15 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    font-size:16px;
+    text-transform:uppercase;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    margin:0;
+    border-bottom:1px solid #ccc;
+}
+
 form {
     display:flex;
     flex-wrap:wrap;

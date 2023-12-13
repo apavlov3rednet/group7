@@ -1,114 +1,109 @@
 (function () {
-  let obOwnerForm = document.getElementById("owner");
-  let obCardForm = document.getElementById("card");
-  let obBrandForm = document.getElementById("brand");
-  let obModelForm = document.getElementById("model");
+    //Объекты форм
+    let obOwnerForm = document.getElementById("owner");
+    let obCardForm = document.getElementById("card");
+    let obBrandForm = document.getElementById("brand");
+    let obModelForm = document.getElementById("model");
 
-  let selectOwner = obCardForm.querySelector("[name=OWNER]");
-  let selectBrand = obCardForm.querySelector('[name=BRAND]');
-  let selectModel = obCardForm.querySelector('[name=MODEL]');
-  let selectModelBrand = obModelForm.querySelector('[name=BRAND]');
-  
-  let arOwners = DB.getValue("owners") || [];
-  let arBrands = DB.getValue('brands') || [];
-  let arModel = DB.getValue('models') || [];
+    //Объекты селектов
+    let selectOwner = obCardForm.querySelector("[name=OWNER]");
+    let selectBrand = obCardForm.querySelector("[name=BRAND]");
+    let selectModel = obCardForm.querySelector("[name=MODEL]");
+    let selectModelBrand = obModelForm.querySelector("[name=BRAND]");
 
-  function updateSelect(select, ar, titleChoice = 'Выберите') {
-    let children = [];
+    //Массивы БД
+    let arOwners = DB.getValue("owners") || [];
+    let arBrands = DB.getValue("brands") || [];
+    let arModel = DB.getValue("models") || [];
+    let arCard = DB.getValue('cards') || [];
 
-    select.innerHTML = "";
+    /**
+     * @param {*} select 
+     * @param {*} ar 
+     * @param {*} titleChoice 
+     */
+    function updateSelect(select, ar, titleChoice = "Выберите") {
+        let children = [];
 
-    children.push(
-      DOM.create("option", {
-        attrs: { value: 0 },
-        text: titleChoice,
-      })
-    );
+        select.innerHTML = "";
 
-    ar.forEach((item) => {
-      if (Object.keys(item).length > 0) {
         children.push(
-          DOM.create("option", {
-            attrs: { value: item.id },
-            text: Object.values(item.params).join(' '),
-          })
+            DOM.create("option", {
+                attrs: { value: 0 },
+                text: titleChoice,
+            })
         );
+
+        ar.forEach((item) => {
+            if (Object.keys(item).length > 0) {
+                children.push(
+                    DOM.create("option", {
+                        attrs: { value: item.id },
+                        text: Object.values(item.params).join(" "),
+                    })
+                );
+            }
+        });
+
+        DOM.adjust(select, {
+            children: children,
+        });
+    }
+
+    function bindSendForm(obForm, arData, dbName, callback = []) {
+        obForm.addEventListener("submit", function (e) {
+            e.preventDefault(); //Отмена штатного поведения
+
+            let arFields = obForm.querySelectorAll("input, select");
+            let model = new Model();
+
+            arFields.forEach((item) => {
+                let params = {};
+                params[item.name] = item.value;
+                model.set(params);
+
+                switch (item.tagName) {
+                    case "INPUT":
+                        item.value = "";
+                        break;
+
+                    case "SELECT":
+                        item.value = 0;
+                        break;
+                }
+            });
+
+            arData.push(model);
+
+            DB.setValue(dbName, arData);
+
+            if(callback.length > 0)
+              callback.forEach((item) => updateSelect(item, arData));
+        });
+    }
+
+    //Связка полей
+    selectBrand.addEventListener('change', function() {
+      let value = selectBrand.value;
+
+      if(arModel.length > 0) {
+        let newArray = arModel.filter(item => item.params.BRAND === value);
+        updateSelect(selectModel, newArray);
       }
     });
 
-    DOM.adjust(select, {
-      children: children,
-    });
-  }
+    //События формы
+    bindSendForm(obOwnerForm, arOwners, "owners", [selectOwner]);
+    bindSendForm(obBrandForm, arBrands, "brands", [
+        selectBrand,
+        selectModelBrand,
+    ]);
+    bindSendForm(obModelForm, arModel, "models", [selectModel]);
+    bindSendForm(obCardForm, arCard, 'cards');
 
-  obOwnerForm.addEventListener("submit", function (event) {
-    event.preventDefault(); //останавливает штатное событие
-
-    let arFields = obOwnerForm.querySelectorAll("input");
-
-    let owner = new Model();
-
-    arFields.forEach((item) => {
-      let params = {};
-
-      params[item.name] = item.value;
-
-      owner.set(params);
-    });
-
-    arOwners.push(owner);
-
-    DB.setValue("owners", arOwners);
-
-    updateSelect(selectOwner, arOwners, 'Выберите владельца');
-  });
-
-  obBrandForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    let brand = new Model();
-
-    let arFields = obBrandForm.querySelectorAll("input");
-
-    arFields.forEach((item) => {
-      let params = {};
-
-      params[item.name] = item.value;
-
-      brand.set(params);
-    });
-
-    arBrands.push(brand);
-
-    DB.setValue("brands", arBrands);
-
+    //Обновление полей при первой загрузке
+    updateSelect(selectOwner, arOwners, "Выберите владельца");
     updateSelect(selectBrand, arBrands);
     updateSelect(selectModelBrand, arBrands);
-  });
-
-  obModelForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    let model = new Model();
-
-    let arFields = obModelForm.querySelectorAll("input");
-
-    arFields.forEach((item) => {
-      let params = {};
-
-      params[item.name] = item.value;
-
-      model.set(params);
-    });
-
-    arModel.push(model);
-
-    DB.setValue("models", arModel);
-
     updateSelect(selectModel, arModel);
-  });
-
-  updateSelect(selectOwner, arOwners, 'Выберите владельца');
-  updateSelect(selectBrand, arBrands);
-  updateSelect(selectModelBrand, arBrands);
-  updateSelect(selectModel, arModel);
-
 })(window);
