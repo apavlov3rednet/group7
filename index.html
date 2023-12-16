@@ -10,6 +10,16 @@
     <div class="content">
       <h1>Single Page Application</h1>
 
+      <menu>
+        <li data-route="owners">Владельцы</li>
+        <li data-route="brands">Бренды</li>
+        <li data-route="models">Модели</li>
+        <li data-route="cards">Карточки</li>
+        <li data-route="services">Услуги</li>
+      </menu>
+
+      <div id="content"></div>
+
       <form action="" name="ADD_OWNER" id="owner">
         <h2>Владелец</h2>
         <input type="text" name="firstName" placeholder="Имя" />
@@ -80,6 +90,7 @@
     <script src="/js/db.js"></script>
     <script src="/js/dom.js"></script>
     <script src="/js/model.js"></script>
+    <script src="/js/routing.js"></script>
     <script src="/js/core.js"></script>
   </body>
 </html>

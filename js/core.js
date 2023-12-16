@@ -5,6 +5,9 @@
     let obBrandForm = document.getElementById("brand");
     let obModelForm = document.getElementById("model");
 
+    //Меню
+    let menuList = document.body.querySelectorAll('menu li');
+
     //Объекты селектов
     let selectOwner = obCardForm.querySelector("[name=OWNER]");
     let selectBrand = obCardForm.querySelector("[name=BRAND]");
@@ -90,6 +93,18 @@
         let newArray = arModel.filter(item => item.params.BRAND === value);
         updateSelect(selectModel, newArray);
       }
+    });
+
+    //Маршрутизация
+    let r = new Routing();
+    r.treeRoutes(menuList);
+
+    console.log(r);
+
+    menuList.forEach((item, i) => {
+        item.addEventListener('click', function() {
+            let content = r.getContent(i, View.set);
+        });
     });
 
     //События формы
