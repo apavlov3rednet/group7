@@ -12,7 +12,7 @@ class Routing {
      * @param {*} url important
      * @param {method = GET*|POST, type = sync*|async, responseType = '', headers = [], data = {} } params options
      */
-    static ajax(url, params = {}) {
+    static ajaxOld(url, params = {}) {
         let xhr = new XMLHttpRequest();
 
         //Метод запроса к серверу
@@ -81,6 +81,29 @@ class Routing {
         }
     }
 
+    /**
+     * 
+     * @param {*} url 
+     * @param {callback = function() {}} params 
+     */
+    static ajax(url, params) {
+        fetch(url)
+        .then(response => {
+            if(params.type === 'json')
+                return response.json();
+
+            if(params.type === 'blob')
+                return response.blob();
+
+            return response.text();
+        })
+        .then(answer => {
+            if(params.callback && params.callback instanceof Function)
+                params.callback({title: params.title, answer: answer});
+            else return answer;
+        });
+    }
+
     treeRoutes(menu = []) {
         menu.forEach((item, index) => {
             this.arRoutes[index] = {
@@ -99,32 +122,20 @@ class Routing {
 
     getContent(id, callback) {
         let url = this.arRoutes[id].request || 'error';
+        let title = this.arRoutes[id].name;
+        let pageUrl = this.arRoutes[id].url;
 
-        if(url === 'error') {
-            Routing.ajax(this.arRoutes.error.request);
-            this.setUrl(this.arRoutes.error.url, this.arRoutes.error.name);
+        if(url !== 'error') {
+            Routing.ajax(url, {
+                title: title,
+                callback: callback
+            }); 
         }
-        else {
-            let content;
 
-            content = fetch(url)
-                .then(response => {
-                    return response.text();
-                })
-                .then(data => {
-                    content = data;
-                    //this.setUrl(this.arRoutes[id].url, this.arRoutes[id].name);
-                    
-                    if(callback instanceof Function)
-                        callback(content);
-                });
-
-            //Routing.ajax(url);
-            
-        }
+        this.setUrl(pageUrl, title);
     }
 
     setUrl(url, title) {
-        history.pushState({page: 1}, title, url);
+        //history.pushState({page: 1}, title, url);
     }
 }

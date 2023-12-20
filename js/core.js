@@ -1,18 +1,18 @@
 (function () {
     //Объекты форм
-    let obOwnerForm = document.getElementById("owner");
-    let obCardForm = document.getElementById("card");
-    let obBrandForm = document.getElementById("brand");
-    let obModelForm = document.getElementById("model");
+    // let obOwnerForm = document.getElementById("owner");
+    // let obCardForm = document.getElementById("card");
+    // let obBrandForm = document.getElementById("brand");
+    // let obModelForm = document.getElementById("model");
 
     //Меню
     let menuList = document.body.querySelectorAll('menu li');
 
     //Объекты селектов
-    let selectOwner = obCardForm.querySelector("[name=OWNER]");
-    let selectBrand = obCardForm.querySelector("[name=BRAND]");
-    let selectModel = obCardForm.querySelector("[name=MODEL]");
-    let selectModelBrand = obModelForm.querySelector("[name=BRAND]");
+    // let selectOwner = obCardForm.querySelector("[name=OWNER]");
+    // let selectBrand = obCardForm.querySelector("[name=BRAND]");
+    // let selectModel = obCardForm.querySelector("[name=MODEL]");
+    // let selectModelBrand = obModelForm.querySelector("[name=BRAND]");
 
     //Массивы БД
     let arOwners = DB.getValue("owners") || [];
@@ -86,39 +86,37 @@
     }
 
     //Связка полей
-    selectBrand.addEventListener('change', function() {
-      let value = selectBrand.value;
+    // selectBrand.addEventListener('change', function() {
+    //   let value = selectBrand.value;
 
-      if(arModel.length > 0) {
-        let newArray = arModel.filter(item => item.params.BRAND === value);
-        updateSelect(selectModel, newArray);
-      }
-    });
+    //   if(arModel.length > 0) {
+    //     let newArray = arModel.filter(item => item.params.BRAND === value);
+    //     updateSelect(selectModel, newArray);
+    //   }
+    // });
 
     //Маршрутизация
     let r = new Routing();
     r.treeRoutes(menuList);
 
-    console.log(r);
-
     menuList.forEach((item, i) => {
         item.addEventListener('click', function() {
-            let content = r.getContent(i, View.set);
+            let content = r.getContent(i, View.setContent);
         });
     });
 
     //События формы
-    bindSendForm(obOwnerForm, arOwners, "owners", [selectOwner]);
-    bindSendForm(obBrandForm, arBrands, "brands", [
-        selectBrand,
-        selectModelBrand,
-    ]);
-    bindSendForm(obModelForm, arModel, "models", [selectModel]);
-    bindSendForm(obCardForm, arCard, 'cards');
+    // bindSendForm(obOwnerForm, arOwners, "owners", [selectOwner]);
+    // bindSendForm(obBrandForm, arBrands, "brands", [
+    //     selectBrand,
+    //     selectModelBrand,
+    // ]);
+    // bindSendForm(obModelForm, arModel, "models", [selectModel]);
+    // bindSendForm(obCardForm, arCard, 'cards');
 
-    //Обновление полей при первой загрузке
-    updateSelect(selectOwner, arOwners, "Выберите владельца");
-    updateSelect(selectBrand, arBrands);
-    updateSelect(selectModelBrand, arBrands);
-    updateSelect(selectModel, arModel);
+    // //Обновление полей при первой загрузке
+    // updateSelect(selectOwner, arOwners, "Выберите владельца");
+    // updateSelect(selectBrand, arBrands);
+    // updateSelect(selectModelBrand, arBrands);
+    // updateSelect(selectModel, arModel);
 })(window);
