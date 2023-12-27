@@ -94,3 +94,23 @@ form button {
 form button:hover {
     background: #1E88E5;
 }
+
+.simple-table {
+    margin:20px auto;
+    border:0;
+}
+
+.simple-table thead th {
+    padding:5px 20px;
+    background: #1976D2;
+    color: #fff;
+    cursor: pointer;
+}
+
+.simple-table tbody tr:nth-child(even) {
+    background: #1976D220;
+}
+
+.simple-table tbody td {
+    padding:5px 20px;
+}

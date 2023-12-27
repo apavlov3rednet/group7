@@ -12,9 +12,9 @@ class Table extends DOM {
 
             },
             children: [
-                header,
-                body,
-                footer,
+                (header) ? header : '',
+                (body) ? body : '',
+                (footer) ? footer : '',
             ]
         });
     }

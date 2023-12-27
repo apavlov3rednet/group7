@@ -3,11 +3,11 @@ class View {
     }
 
     static setContent(content) {
-        let obContent = document.getElementById('content');
+        let obFormContent = document.getElementById('form');
         let title = content.title;
-        obContent.innerHTML = content.answer;
+        obFormContent.innerHTML = content.answer;
 
-        let obForm = obContent.querySelector('form');
+        let obForm = obFormContent.querySelector('form');
         let h1 = document.querySelector('h1');
         let obTitle = document.querySelector('title');
 
@@ -20,12 +20,49 @@ class View {
             let arSelect = obForm.querySelectorAll('select');
 
             View.bindSendForm(obForm, db, dbName, arSelect);
+            View.getTable(dbName);
 
             arSelect.forEach(select => {
                 let dbSelect = DB.getValue(select.getAttribute('name').toLowerCase()) || [];
                 View.updateSelect(select, dbSelect);
             });
         }
+    }
+
+    static getTable(baseName) {
+        let dbValues = DB.getValue(baseName) || [];
+        let data = [];
+        let arHead = [];
+        let obContent = document.getElementById('content');
+
+        if(dbValues instanceof Array) {
+            dbValues.forEach((item, index) => {
+                let row = [];
+                row.push(item.id);
+
+                if(index == 0)
+                    arHead.push('ID');
+
+                for(let i in item.params) {
+                    row.push(item.params[i]);
+                    
+                    if(index == 0)
+                        arHead.push(i);
+                }
+
+                data.push(row);
+            });
+        }
+
+        let table = Table.generate(arHead, data, [], {
+            className: 'simple-table'
+        });
+
+        obContent.innerHTML = "";
+
+        DOM.adjust(obContent, {
+            children: [table]
+        });
     }
 
     static bindSendForm(obForm, arData, dbName, callback) {
@@ -54,6 +91,7 @@ class View {
             arData.push(model);
 
             DB.setValue(dbName, arData);
+            View.getTable(dbName);
         });
     }
 
@@ -82,6 +120,18 @@ class View {
 
         DOM.adjust(select, {
             children: children,
+            events: {
+                change: function(event) {
+                    if(select.dataset.rel) {
+                        let id = select.value;
+                        let relSelect = document.body.querySelector('[name='+select.dataset.rel+']');
+                        let db = relSelect.getAttribute('name').toLowerCase();
+                        let arDB = DB.getValue(db).filter(item => item.params[select.getAttribute('name')] === id) || [];
+                    
+                        View.updateSelect(relSelect, arDB);
+                    }
+                }
+            }
         });
     }
 }

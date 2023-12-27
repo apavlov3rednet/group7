@@ -7,83 +7,10 @@
 
     //Меню
     let menuList = document.body.querySelectorAll('menu li');
+    let obContent = document.getElementById('content');
 
-    //Объекты селектов
-    // let selectOwner = obCardForm.querySelector("[name=OWNER]");
-    // let selectBrand = obCardForm.querySelector("[name=BRAND]");
-    // let selectModel = obCardForm.querySelector("[name=MODEL]");
-    // let selectModelBrand = obModelForm.querySelector("[name=BRAND]");
-
-    //Массивы БД
-    let arOwners = DB.getValue("owners") || [];
-    let arBrands = DB.getValue("brands") || [];
-    let arModel = DB.getValue("models") || [];
-    let arCard = DB.getValue('cards') || [];
-
-    /**
-     * @param {*} select 
-     * @param {*} ar 
-     * @param {*} titleChoice 
-     */
-    function updateSelect(select, ar, titleChoice = "Выберите") {
-        let children = [];
-
-        select.innerHTML = "";
-
-        children.push(
-            DOM.create("option", {
-                attrs: { value: 0 },
-                text: titleChoice,
-            })
-        );
-
-        ar.forEach((item) => {
-            if (Object.keys(item).length > 0) {
-                children.push(
-                    DOM.create("option", {
-                        attrs: { value: item.id },
-                        text: Object.values(item.params).join(" "),
-                    })
-                );
-            }
-        });
-
-        DOM.adjust(select, {
-            children: children,
-        });
-    }
-
-    function bindSendForm(obForm, arData, dbName, callback = []) {
-        obForm.addEventListener("submit", function (e) {
-            e.preventDefault(); //Отмена штатного поведения
-
-            let arFields = obForm.querySelectorAll("input, select");
-            let model = new Model();
-
-            arFields.forEach((item) => {
-                let params = {};
-                params[item.name] = item.value;
-                model.set(params);
-
-                switch (item.tagName) {
-                    case "INPUT":
-                        item.value = "";
-                        break;
-
-                    case "SELECT":
-                        item.value = 0;
-                        break;
-                }
-            });
-
-            arData.push(model);
-
-            DB.setValue(dbName, arData);
-
-            if(callback.length > 0)
-              callback.forEach((item) => updateSelect(item, arData));
-        });
-    }
+    //БД
+    let db = localStorage;
 
     //Связка полей
     // selectBrand.addEventListener('change', function() {
@@ -99,26 +26,26 @@
     let r = new Routing();
     r.treeRoutes(menuList);
 
-    console.log(r)
-
     menuList.forEach((item, i) => {
         item.addEventListener('click', function() {
             let content = r.getContent(i, View.setContent);
         });
     });
 
-    //События формы
-    // bindSendForm(obOwnerForm, arOwners, "owners", [selectOwner]);
-    // bindSendForm(obBrandForm, arBrands, "brands", [
-    //     selectBrand,
-    //     selectModelBrand,
-    // ]);
-    // bindSendForm(obModelForm, arModel, "models", [selectModel]);
-    // bindSendForm(obCardForm, arCard, 'cards');
+    let arHead = ["Название таблицы", "Количество записей"];
+    let arBody = [];
 
-    // //Обновление полей при первой загрузке
-    // updateSelect(selectOwner, arOwners, "Выберите владельца");
-    // updateSelect(selectBrand, arBrands);
-    // updateSelect(selectModelBrand, arBrands);
-    // updateSelect(selectModel, arModel);
+    for (let i in db) {
+        let count = DB.getCount(i);
+
+        if(count > 0)
+            arBody.push([i, count]);
+    }
+
+    let table = Table.generate(arHead, arBody, [], {
+        className: 'simple-table'
+    });
+
+    obContent.append(table);
+
 })(window);
