@@ -20,7 +20,7 @@ class View {
             let arSelect = obForm.querySelectorAll('select');
 
             View.bindSendForm(obForm, db, dbName, arSelect);
-            View.getTable(dbName);
+            View.setTable(dbName);
 
             arSelect.forEach(select => {
                 let dbSelect = DB.getValue(select.getAttribute('name').toLowerCase()) || [];
@@ -29,7 +29,7 @@ class View {
         }
     }
 
-    static getTable(baseName) {
+    static setTable(baseName) {
         let dbValues = DB.getValue(baseName) || [];
         let data = [];
         let arHead = [];
@@ -91,7 +91,7 @@ class View {
             arData.push(model);
 
             DB.setValue(dbName, arData);
-            View.getTable(dbName);
+            View.setTable(dbName);
         });
     }
 
