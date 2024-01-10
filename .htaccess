@@ -1,24 +1,36 @@
-Options +FollowSymlinks
-RewriteEngine On
+php_flag display_errors on
+php_value error_reporting 2847
 
-#Examples
-#Redirect 301 /index.html /
-#Redirect 301 /index.html?page=brands /views/brands/
+RewriteEngine on
 
-#401 Авторизация не выполнена
-#ErrorDocument 401 /404/
+Option -Indexes
+ErrorDocument 404 /404
 
-#conditions
-#RewriteCond %{QUERY_STRING} ^(.*)$ [NC]
-#RewriteRule ^views/$1/ / [R=201, L]
+<IfModule mod_php.c>
+    php_flag session.use_trans_sid off
+</IfModule>
 
-#RewriteCond %{QUERY_STRING} /^(.*)$ [NC]
-#RewriteRule ^$1/ /views/ [R=201, L]
+<IfModule mod_php8.c>
+    php_flag session.use_trans_sid off
+</IfModule>
 
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
 
+    RewriteCond %{REQUEST_FILENAME} !/urlrewrite.php$
+    RewriteRule ^(.*)$ /urlrewrite.php [L]
+</IfModule>
 
+<IfModule mod_dir.c>
+    DirectoryIndex / index.php index.html
+</IfModule>
 
-#Real rules
-#Redirect 301 /index.html?page=^(.*)$ /views/$1/ [R=301, L]
-#Redirect 301 /index.html?page=^(.*)$&params=^(.*)$ /views/$1/$2/ 
-#ErrorDocument 404 /404/
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresType image/jpeg "access plus 3 day"
+    ExpiresType image/gif "access plus 3 day"
+    ExpiresType image/png "access plus 3 day"
+    ExpiresType text/css "access plus 3 day"
+    ExpiresType application/javascript "access plus 3 day"
+</IfModule>
