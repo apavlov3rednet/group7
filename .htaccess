@@ -1,0 +1,24 @@
+Options +FollowSymlinks
+RewriteEngine On
+
+#Examples
+#Redirect 301 /index.html /
+#Redirect 301 /index.html?page=brands /views/brands/
+
+#401 Авторизация не выполнена
+#ErrorDocument 401 /404/
+
+#conditions
+#RewriteCond %{QUERY_STRING} ^(.*)$ [NC]
+#RewriteRule ^views/$1/ / [R=201, L]
+
+#RewriteCond %{QUERY_STRING} /^(.*)$ [NC]
+#RewriteRule ^$1/ /views/ [R=201, L]
+
+
+
+
+#Real rules
+#Redirect 301 /index.html?page=^(.*)$ /views/$1/ [R=301, L]
+#Redirect 301 /index.html?page=^(.*)$&params=^(.*)$ /views/$1/$2/ 
+#ErrorDocument 404 /404/
