@@ -25,14 +25,39 @@ class DB
         return 0;
     }
 
+    /**
+     * 
+     * @param {string} collectionName 
+     * @returns 
+     */
+    static issetCollection(collectionName) {
+        this.Init();
+        let result = this.db[collectionName];
+        this.mongoClient.close();
+        return (result);
+    }
 
     /**
      * 
-     * @param {*} collectionName 
-     * @param {*} filter 
-     * @param {*} select 
-     * @param {*} limit 
-     * @param {*} pageCount 
+     * @param {string} nameCollection 
+     * @param {Object} params 
+     * @returns 
+     */
+    static createCollection(nameCollection, params = {}) {
+        this.Init();
+        let collection = this.db.createCollection(nameCollection, params);
+        this.mongoClient.close();
+        return collection;
+    }
+
+
+    /**
+     * 
+     * @param {string} collectionName 
+     * @param {object} filter 
+     * @param {array} select 
+     * @param {number} limit 
+     * @param {number} pageCount 
      */
     static getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
         let ob = null;
@@ -43,7 +68,7 @@ class DB
             return false;
         }
 
-        let collection = db.collection(collectionName);
+        let collection = this.db.getCollection(collectionName);
         let request = [filter];
 
         if(select.length > 0) {
@@ -73,8 +98,8 @@ class DB
 
     /**
      * 
-     * @param {*} collectionName 
-     * @param {*} props 
+     * @param {string} collectionName 
+     * @param {object} props 
      * @returns 
      */
     static setValue(collectionName, props = {}) {
