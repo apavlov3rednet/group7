@@ -132,6 +132,7 @@ class Routing {
             }); 
         }
 
+        console.log(pageUrl)
         this.setUrl(pageUrl, title);
     }
 
