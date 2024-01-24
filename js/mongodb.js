@@ -1,4 +1,4 @@
-class DB
+class MongoDB
 {
     static #PORT = '27017';
     static #LOCATION = 'mongodb://localhost';
@@ -124,3 +124,5 @@ class DB
             //this.mongoClient.close();
     }
 }
+
+module.exports = MongoDB;
