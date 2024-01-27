@@ -4,16 +4,19 @@
   "main": "index.js",
   "git": "https://github.com/apavlov3rednet/group7.git",
   "scripts": {
-    "test": "runTest",
-    "start" : "node index.js"
+    "dev": "nodemon index.js"
   },
   "author": "A.Pavlov",
   "license": "MIT",
   "keywords": [],
   "dependencies": {
     "mongodb": "6.0",
+    "mongoose": "^8.1.1",
     "react": "^18.2.0",
-    "require": "^2.4.20"
+    "require": "^0.4.4"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
 }
