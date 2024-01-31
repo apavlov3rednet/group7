@@ -1,115 +1,82 @@
-//Подключаем нативный модуль http
+//Подключаем модуль поддержки протокла HTTP
 const http = require('http');
-//Подключаем модуль файловой системы
-const fs = require('fs');
-//Подключаем модуль маршрутизации
+//Подключаем модуль управления файлами
+const fs = require('fs'); //file system
 const path = require('path');
+const express = require('express');
 
-const PORT = 8080;
+const PORT = 8082;
 
-const server = http.createServer(async function(req, res) { //request, response
+//Майм типы данных и расширения файлов
+const mymeType = {
+    '.html' : 'text/html',
+    '.tmpl' : 'text/html',
+    '.js' : 'text/javascript',
+    '.css' : 'text/css',
+    '.png' : 'image/png',
+    '.jpg' : 'image/jpg',
+    '.jpeg' : 'image/jpg',
+    '.gif' : 'image/gif',
+    '.svg' : 'image/svg+xml',
+    '.woff' : 'application/font-woff',
+    '.eot' : 'application/vnd.ms-fontobject',
+    '.ttf' : 'application/font-ttf'
+};
+
+const staticFile = (res, filePath, ext) => {
+    let params = {};
+    if(mymeType[ext].match('text/')) {
+        params = {encoding: 'utf8', flag: 'r'}; 
+    }
+
+    fs.readFile('.' + filePath, params, (err, data) => {
+        if(err) {
+            console.log(err);
+            res.statusCode = 404;
+            res.end();
+        }
+
+        res.setHeader('Content-Type', mymeType[ext]);
+        res.end(data);
+    });
+}
+
+const server = http.createServer(function(req, res) {
     console.log('Server request');
-    console.log(req.url, req.method);
-
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<head><meta charset="UTF-8" /></head>');
-
-    // res.write('<h1>Test</H1>');
-    // res.write('<p>Some text</p>');
-
-    //JSON API
-    // res.setHeader('Content-Type', 'application/json');
-
-    // const data = JSON.stringify([
-    //     {name: "Ivan", age: 46},
-    //     {name: "Artur", age: 15}
-    // ]);
-
-    // res.write(data);
-    //end 
-
-    //механизм реализации
-    // if(req.url == '/') {
-    //     fs.readFile('index.html', (err, data) => {
-    //         if(err) {
-    //             console.log(err);
-    //             res.end();
-    //         }
-    //         else {
-    //             res.write(data);
-    //             res.end();
-    //         }
-    //     });
-    // }
-    // else {
-    //     res.end();
-    // }
 
     const createPath = (page) => path.resolve(__dirname, 'views', `${page}.tmpl`);
+    const url = req.url;
 
     let basePath = '';
 
-    switch(req.url) {
+    switch(url) {
         case '/':
-            basePath = 'index.html';
-            res.statusCode = 200;
-        break;
-
-        case '/index.html': 
-            res.statusCode = 301; //Контролируемый редирект
-            res.setHeader('Location', '/');
+            basePath = '/index.html';
         break;
 
         case '/brands':
             basePath = createPath('brands');
-            res.statusCode = 200;
         break;
 
-        case '/cards':
-            basePath = createPath('cards');
-            res.statusCode = 200;
-        break;
-
-        case '/models':
-            basePath = createPath('models');
-            res.statusCode = 200;
-        break;
-
-        case '/owners':
-            basePath = createPath('owners');
-            res.statusCode = 200;
-        break;
-
-        case '/services':
-            basePath = createPath('services');
-            res.statusCode = 200;
-        break;
-
-        case '/404':
-            basePath = createPath('404');
-            res.statusCode = 404;
-        break;
-
-        default:
-            basePath = createPath('404');
-            res.statusCode = 404;
+        default: 
+            const extname = String(path.extname(url)).toLowerCase();
+            if(extname in mymeType) {
+                console.log(url);
+                console.log(extname);
+                staticFile(res, url, extname);
+            }
+            else {
+                console.log('404');
+                res.end();
+            }
         break;
     }
 
-    fs.readFile(basePath, (err, data) => {
-        if(err) {
-            console.log(err);
-            res.statusCode = 500;
-            res.end();
-        }
-        else {
-            res.write(data);
-            res.end();
-        }
-    });
-    
+    if(basePath != '') {
+        staticFile(res, basePath, '.html');
+    }
 });
 
-server.listen(PORT, "localhost", function(err) {
-    err ? console.log(err) : console.log('Server start listen');
+server.listen(PORT, 'localhost', function() {
+    console.log('Server start listen');
 });

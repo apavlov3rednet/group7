@@ -4,12 +4,13 @@
   "main": "index.js",
   "git": "https://github.com/apavlov3rednet/group7.git",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon public/app.js"
   },
   "author": "A.Pavlov",
   "license": "MIT",
   "keywords": [],
   "dependencies": {
+    "express": "^4.18.2",
     "mongodb": "6.0",
     "mongoose": "^8.1.1",
     "react": "^18.2.0",
