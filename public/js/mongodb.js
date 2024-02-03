@@ -30,6 +30,17 @@ class MongoDB
        
     }
 
+    static getCollection(collectionName) {
+        try {
+            this.client.connect();
+            const db = this.client.db(MongoDB.#DBNAME);
+            return db.collection(collectionName);
+        }
+        catch(e) {
+            console.log(e);
+        }
+    }
+
     static getCount(key) {
         let values = MongoDB.getValue(key);
         if(values instanceof Array)
@@ -115,7 +126,7 @@ class MongoDB
      * @param {object} props 
      * @returns 
      */
-    static setValue(collectionName, props = {}) {
+    static async setValue(collectionName, props = {}) {
         let id = 0;
         this.Init();
 
@@ -124,8 +135,9 @@ class MongoDB
             return false;
         }
         
-        id = this.client.db[collectionName].insertOne(props);
+        id = await this.getCollection(collectionName).insertOne(props);
         this.client.close();
+        console.log(id);
         return id;
     }
 
