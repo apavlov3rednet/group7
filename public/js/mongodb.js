@@ -1,3 +1,5 @@
+const MongoClient = require('mongodb').MongoClient;
+
 class MongoDB
 {
     static #PORT = '27017';
@@ -9,16 +11,27 @@ class MongoDB
     constructor() {}
 
     static Init() {
-        const MongoClient = require(DB.#DBNAME).MongoClient;
-        const url = [DB.#LOCATION, DB.#PORT].join(':'); // mongodb://localhost:27017
+        console.log('DB connect');
+        this.client = new MongoClient('mongodb://localhost:27017/');
+    }
 
-        this.mongoClient = new MongoClient(url);
-        this.client = this.mongoClient.connect(); // LOGIN & PSSWD
-        this.db = client.db(DB.#DBNAME);
+    static async getCountElements(collectionName) {
+        try {
+            this.client.connect();
+            const db = this.client.db(MongoDB.#DBNAME);
+            const collection = db.collection(collectionName);
+            const count = await collection.countDocuments();
+            console.log(count);
+            return count;
+        }
+        catch(e) {
+            console.log(e);
+        }
+       
     }
 
     static getCount(key) {
-        let values = DB.getValue(key);
+        let values = MongoDB.getValue(key);
         if(values instanceof Array)
             return values.length;
 
@@ -107,12 +120,12 @@ class MongoDB
         this.Init();
 
         if(Object.keys(props).length == 0 || collectionName == "") {
-            this.mongoClient.close();
+            this.client.close();
             return false;
         }
         
-        id = this.db[collectionName].insertOne(props);
-        this.mongoClient.close();
+        id = this.client.db[collectionName].insertOne(props);
+        this.client.close();
         return id;
     }
 
