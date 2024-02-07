@@ -1,4 +1,4 @@
-<div class="content">
+const content = <div class="content">
     <h1>Single Page Application</h1>
 
     <menu>
@@ -9,4 +9,6 @@
       <li data-route="services">Услуги</li>
     </menu>
 
-    <div id="form">
+    <myMenu />
+
+    <div id="form"></div>
