@@ -1,6 +1,6 @@
 .content {
     display:block;
-    max-width:400px;
+    max-width:400px; /* em, rem, inch, sm, 100%, 100vh, 100vw */
     margin:0 auto;
 }
 
@@ -19,7 +19,7 @@ menu li {
     margin:0;
     padding: 5px 10px;
     border-radius:4px;
-    background: #1976D2;
+    background: linear-gradient(red, yellow);
     color: #fff;
     cursor: pointer;
 }

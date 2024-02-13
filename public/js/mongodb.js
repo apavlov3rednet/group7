@@ -1,3 +1,5 @@
+const MongoClient = require('mongodb').MongoClient;
+
 class MongoDB
 {
     static #PORT = '27017';
@@ -8,17 +10,41 @@ class MongoDB
 
     constructor() {}
 
-    static Init() {
-        const MongoClient = require(DB.#DBNAME).MongoClient;
-        const url = [DB.#LOCATION, DB.#PORT].join(':'); // mongodb://localhost:27017
-
-        this.mongoClient = new MongoClient(url);
-        this.client = this.mongoClient.connect(); // LOGIN & PSSWD
-        this.db = client.db(DB.#DBNAME);
+    Init() {
+        console.log('start DB connect');
+        const url = [MongoDB.#LOCATION, MongoDB.#PORT].join(':') + '/';
+        this.client = new MongoClient(url);
+        this.db = this.client.db(MongoDB.#DBNAME);
+        console.log('DB connect success');
     }
 
-    static getCount(key) {
-        let values = DB.getValue(key);
+    async getCountElements(collectionName) {
+        try {
+            this.client.connect();
+            const db = this.client.db(MongoDB.#DBNAME);
+            const collection = db.collection(collectionName);
+            const count = await collection.countDocuments();
+            return count;
+        }
+        catch(e) {
+            console.log(e);
+        }
+       
+    }
+
+    getCollection(collectionName) {
+        try {
+            this.client.connect();
+            const db = this.client.db(MongoDB.#DBNAME);
+            return db.collection(collectionName);
+        }
+        catch(e) {
+            console.log(e);
+        }
+    }
+
+    getCount(key) {
+        let values = MongoDB.getValue(key);
         if(values instanceof Array)
             return values.length;
 
@@ -30,7 +56,7 @@ class MongoDB
      * @param {string} collectionName 
      * @returns 
      */
-    static issetCollection(collectionName) {
+    issetCollection(collectionName) {
         this.Init();
         let result = this.db[collectionName];
         this.mongoClient.close();
@@ -43,7 +69,7 @@ class MongoDB
      * @param {Object} params 
      * @returns 
      */
-    static createCollection(nameCollection, params = {}) {
+    createCollection(nameCollection, params = {}) {
         this.Init();
         let collection = this.db.createCollection(nameCollection, params);
         this.mongoClient.close();
@@ -59,7 +85,7 @@ class MongoDB
      * @param {number} limit 
      * @param {number} pageCount 
      */
-    static getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
+    async getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
         let ob = null;
         this.Init();
 
@@ -68,7 +94,7 @@ class MongoDB
             return false;
         }
 
-        let collection = this.db.getCollection(collectionName);
+        let collection = this.db.collection(collectionName);
         let request = [filter];
 
         if(select.length > 0) {
@@ -79,9 +105,7 @@ class MongoDB
             request.push(arSelect);
         }
 
-        ob = collection.find(...request).limit(limit);
-
-        this.mongoClient.close();
+        ob = await collection.find(...request).toArray();//.limit(limit);
         return ob;
     }
 
@@ -102,21 +126,20 @@ class MongoDB
      * @param {object} props 
      * @returns 
      */
-    static setValue(collectionName, props = {}) {
+    async setValue(collectionName, props = {}) {
         let id = 0;
         this.Init();
 
         if(Object.keys(props).length == 0 || collectionName == "") {
-            this.mongoClient.close();
+            this.client.close();
             return false;
         }
         
-        id = this.db[collectionName].insertOne(props);
-        this.mongoClient.close();
+        id = await this.db.collection(collectionName).insertOne(props);
         return id;
     }
 
-    static removeValue(key) {
+    removeValue(key) {
         //this.Init();
         if(confirm('Удалить?')) 
             window.localStorage.removeItem(key);
