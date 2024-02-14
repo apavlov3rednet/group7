@@ -1,9 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-const mogoose = require('mongoose');
+//const mogoose = require('mongoose');
 const MongoDB = require('./public/js/mongodb');
 const { ObjectId } = require('mongodb');
+const { readFile } = require('fs');
 
 const app = express();
 
@@ -12,8 +13,6 @@ const PORT = 3000;
 //Init DB driver
 const mdb = new MongoDB;
 mdb.Init();
-
-// console.log(MongoDB.getCountElements('brands'));
 
 const createPath = (page, dir = 'views', ext = 'html') => {
     return path.resolve(__dirname, dir, `${page}.html`)
@@ -40,7 +39,9 @@ app.use(express.static(`public`));
 //GET Request
 app.get('/', (req, res) => {
     const title = 'Home';
+    
     res.sendFile(createPath('index'), {title});
+    //res.sendFile(App.render(readFile(index)));
 });
 
 app.get('/index.html', (req, res) => {

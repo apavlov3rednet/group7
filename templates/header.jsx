@@ -11,4 +11,4 @@ const content = <div class="content">
 
     <myMenu />
 
-    <div id="form"></div>
+    <div id="form"></div></div>;
