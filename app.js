@@ -5,10 +5,12 @@ const path = require('path');
 const MongoDB = require('./public/js/mongodb');
 const { ObjectId } = require('mongodb');
 const { readFile } = require('fs');
+const { nextTick } = require('process');
 
 const app = express();
+const router = express.Router();
 
-const PORT = 3000;
+const PORT = 8000;
 
 //Init DB driver
 const mdb = new MongoDB;
@@ -36,12 +38,24 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(`public`));
 
+app.use((req, res, next) => {
+    console.log('Request Type:', req.method);
+    console.log('Request URL:', req.originalUrl);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // SELECT ID, NAME, PICTURE FROM table.name WHERE ID=1
+    // SELECT * FROM table.name WHERE ID=1
+    res.setHeader('Access-Control-Allow-Method', 'GET'); //PUSH PULL UPDATE PUT
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    //res.nextTick();
+    next();
+});
+
 //GET Request
-app.get('/', (req, res) => {
-    const title = 'Home';
-    
-    res.sendFile(createPath('index'), {title});
-    //res.sendFile(App.render(readFile(index)));
+app.get('/', async (req, res) => {
+    //let list = await mdb.getValue('brands');
+   // res.end(JSON.stringify(list));
+   res.end();
 });
 
 app.get('/index.html', (req, res) => {
@@ -49,35 +63,25 @@ app.get('/index.html', (req, res) => {
 });
 
 app.get('/:section/', async (req, res) => {
-    const title = req.params.section;
-    let list = await mdb.getValue(req.params.section,);
-    //console.log(list);
-    res.sendFile(createPath(req.params.section), {title});
+    let list = await mdb.getValue(req.params.section);
+    res.end(JSON.stringify(list));
 });
 
-app.get('/views/:page.html', (req, res) => {
-    res.sendFile(createPath(req.params.page));
-});
+// app.get('/views/:page.html', (req, res) => {
+
+// });
 
 //POST Request
 app.post('/:section/', async (req, res) => {
-    //console.log(req.body);
-
     const model = require('./models/' + req.params.section);
-
-    //let data = controllModel(req.body, model);
-
     let id = await mdb.setValue(req.params.section, req.body);
 
-
-    
     if(id.insertedId instanceof ObjectId) {
         res.redirect(req.url + '?success=Y');
     }
     else {
         res.redirect(req.url + '?success=N');
     }
-    
 });
 
 //Обработка ошибок должен идти в конце
@@ -88,5 +92,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, (error) => {
-    (error) ? console.log(error) : console.log('Server start listen');
+    (error) ? console.log(error) : console.log('Server start listen on port '+ PORT );
 });
