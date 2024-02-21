@@ -4,7 +4,7 @@
   "main": "index.js",
   "git": "https://github.com/apavlov3rednet/group7.git",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon server.js"
   },
   "author": "A.Pavlov",
   "license": "MIT",

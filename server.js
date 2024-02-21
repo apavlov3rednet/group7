@@ -32,15 +32,13 @@ const createPath = (page, dir = 'views', ext = 'html') => {
 
 app.use(morgan(':method :url :status :res[content-lenght] - :response-time ms'));
 
-app.set('views', 'views');
-
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static(`public`));
+// Методы для работы от сервера с публичной частью
+// app.set('views', 'views');
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(`public`));
 
 app.use((req, res, next) => {
-    console.log('Request Type:', req.method);
-    console.log('Request URL:', req.originalUrl);
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Access-Control-Allow-Origin', '*');
     // SELECT ID, NAME, PICTURE FROM table.name WHERE ID=1
     // SELECT * FROM table.name WHERE ID=1
@@ -53,14 +51,22 @@ app.use((req, res, next) => {
 
 //GET Request
 app.get('/', async (req, res) => {
-    //let list = await mdb.getValue('brands');
-   // res.end(JSON.stringify(list));
-   res.end();
+    let menu = await mdb.getValue('menu');
+    let list = await mdb.getValue('brands');
+
+    let data = {
+        menu: menu,
+        table: list
+    };
+
+    res.end(JSON.stringify(data));
+   //res.end(JSON.stringify(list));
+   //res.end();
 });
 
-app.get('/index.html', (req, res) => {
-    res.redirect('/');
-});
+// app.get('/index.html', (req, res) => {
+//     res.redirect('/');
+// });
 
 app.get('/:section/', async (req, res) => {
     let list = await mdb.getValue(req.params.section);
