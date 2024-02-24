@@ -2,6 +2,7 @@
   "name": "group7",
   "version": "1.0.0",
   "main": "index.js",
+  "type" : "module",
   "git": "https://github.com/apavlov3rednet/group7.git",
   "scripts": {
     "dev": "nodemon server.js"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/header/Header';
 
@@ -8,21 +8,18 @@ function App() {
   const [data, setData] = useState(null);
   const [menu, setMenu] = useState(null);
 
+  const fetchServer = useCallback(async () => {
+    const response = await fetch(serverAddr);
+    const dataServer = await response.json();
+
+    setMenu(dataServer.menu);
+    setData(dataServer.table);
+  }, []);
+
   useEffect(
     () => {
-      if(!data && !menu) {
-        fetch(serverAddr)
-        .then( res => res.json() )
-        .then(
-          res => {
-            setMenu(res.menu);
-          },
-          error => {
-            console.log(error);
-          }
-        )
-      }
-    }
+      fetchServer();
+    }, [fetchServer]
   )
 
   return (

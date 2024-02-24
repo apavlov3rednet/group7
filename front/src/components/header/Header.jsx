@@ -21,7 +21,7 @@ export default function Header(props) {
                 clearInterval(interval);
                 console.log('clear time');
             }
-        }, []
+        }, [elements]
     )
 
     return (
