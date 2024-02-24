@@ -8,14 +8,17 @@ export default class MDB
     static #PSSWD;
     static #DBNAME = 'group7';
 
-    constructor() {}
-
-    Init() {
+    constructor(collectionName) {
         console.log('start DB connect');
         const url = [MDB.#LOCATION, MDB.#PORT].join(':') + '/';
         this.client = new MongoClient(url);
         this.db = this.client.db(MDB.#DBNAME);
+        this.collection = this.db.collection(collectionName);
         console.log('DB connect success');
+    }
+
+    changeCollection(collectionName) {
+        this.collection = this.db.collection(collectionName);
     }
 
     async getCountElements(collectionName) {
@@ -57,7 +60,6 @@ export default class MDB
      * @returns 
      */
     issetCollection(collectionName) {
-        this.Init();
         let result = this.db[collectionName];
         this.mongoClient.close();
         return (result);
@@ -69,9 +71,8 @@ export default class MDB
      * @param {Object} params 
      * @returns 
      */
-    createCollection(nameCollection, params = {}) {
-        this.Init();
-        let collection = this.db.createCollection(nameCollection, params);
+    async createCollection(nameCollection, params = {}) {
+        let collection = await this.db.createCollection(nameCollection, params);
         this.mongoClient.close();
         return collection;
     }
@@ -85,16 +86,14 @@ export default class MDB
      * @param {number} limit 
      * @param {number} pageCount 
      */
-    async getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
+    async getValue(filter = {}, select = [], limit = false, pageCount = false) {
         let ob = null;
-        this.Init();
 
         if(collectionName == "") {
             this.mongoClient.close();
             return false;
         }
 
-        let collection = this.db.collection(collectionName);
         let request = [filter];
 
         if(select.length > 0) {
@@ -114,12 +113,7 @@ export default class MDB
         if(pageCount)
             options.skip = pageCount;
 
-            request.push(options);
-            
-
-            console.log(request);
-
-        ob = await collection.find(...request).toArray();
+        ob = await this.collection.find(...request, options).toArray();
         return ob;
     }
 
@@ -140,23 +134,24 @@ export default class MDB
      * @param {object} props 
      * @returns 
      */
-    async setValue(collectionName, props = {}) {
+    async setValue(props = {}) {
         let id = 0;
-        this.Init();
 
         if(Object.keys(props).length == 0 || collectionName == "") {
             this.client.close();
             return false;
         }
         
-        id = await this.db.collection(collectionName).insertOne(props);
+        id = await this.collection.insertOne(props);
         return id;
     }
 
-    removeValue(key) {
+    async removeValue(key) {
         //this.Init();
-        if(confirm('Удалить?')) 
-            window.localStorage.removeItem(key);
+        if(confirm('Удалить?')) {
+            this.collection.dropOne(key);
+        }
+            
 
             //this.mongoClient.close();
     }

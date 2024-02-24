@@ -60,20 +60,29 @@ app.use((req, res, next) => {
 // });
 
 app.get('/api/get:CollectionName/', async (req, res) => {
-    let collectionName = req.params.CollectionName;
+    let collectionName = req.params.CollectionName.toLowerCase();
 
     let result = {};
-    let mdb = new FetchServer.MDB;
-    mdb.Init();
+    let mdb = new FetchServer.MDB(collectionName);
 
     let filter = {},
         select = [],
         limit = req.query.limit ? req.query.limit : false,
         skip = req.query.skip ? req.query.skip : false;
 
-    result = await mdb.getValue(collectionName.toLowerCase(), filter, select, limit, skip);
+    result = await mdb.getValue(filter, select, limit, skip);
 
     res.end(JSON.stringify(result));
+});
+
+app.post('/api/set:CollectionName/', async (req, res) => {
+    const collectionName = req.params.CollectionName.toLowerCase();
+    const mdb = new FetchServer.MDB;
+    const Controll = new FetchServer.Controll(collectionName);
+    
+    mdb.Init(collectionName);
+    const result = await mdb.setValue(Controll.preparePost(req.query));
+    res.end();
 });
 
 //POST Request
