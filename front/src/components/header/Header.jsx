@@ -10,7 +10,6 @@ export default function Header(props) {
      * 2. useState и useEffect всегда должны быть вне условия и на самом верху
      */
     const [now, setNow] = useState(new Date()); //0 - значение, 1 - функция коллбек, которая меняет это значение
-    const [elements, setElements] = useState(null);
 
     useEffect(
         () => {
@@ -21,7 +20,7 @@ export default function Header(props) {
                 clearInterval(interval);
                 console.log('clear time');
             }
-        }, [elements]
+        }, []
     )
 
     return (
@@ -31,7 +30,7 @@ export default function Header(props) {
                 <h1>SPA</h1>
             </div>
 
-            <Menu elements={ props.menu }/>
+            <Menu />
 
             <div className='timer'>{ now.toLocaleTimeString() }</div>
         </header>

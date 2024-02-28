@@ -102,8 +102,8 @@ app.post('/api/set:CollectionName/', async (req, res) => {
 app.use((req, res) => {
     console.log('404')
     res
-        .status(404)
-        .sendFile(createPath(404));
+        .status(404).end();
+        //.sendFile(createPath(404));
 });
 
 app.listen(PORT, (error) => {

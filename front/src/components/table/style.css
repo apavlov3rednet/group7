@@ -1,0 +1,19 @@
+.simple-table {
+    margin:20px auto;
+    border:0;
+}
+
+.simple-table thead th {
+    padding:5px 20px;
+    background: #a0a3a7;
+    color: #fff;
+    cursor: pointer;
+}
+
+.simple-table tbody tr:nth-child(even) {
+    background: #e3e3e3;
+}
+
+.simple-table tbody td {
+    padding:5px 20px;
+}

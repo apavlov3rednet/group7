@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import Schema from '../schema/index.js';
 
 export default class MDB
 {
@@ -8,10 +9,12 @@ export default class MDB
     static #PSSWD;
     static #DBNAME = 'group7';
 
-    constructor(collectionName) {
+    constructor(collectionName = '') {
         console.log('start DB connect');
         const url = [MDB.#LOCATION, MDB.#PORT].join(':') + '/';
         this.client = new MongoClient(url);
+        this.client.connect();
+        this.schema = Schema[collectionName];
         this.db = this.client.db(MDB.#DBNAME);
         this.collection = this.db.collection(collectionName);
         console.log('DB connect success');
@@ -23,10 +26,8 @@ export default class MDB
 
     async getCountElements(collectionName) {
         try {
-            this.client.connect();
             const db = this.client.db(MDB.#DBNAME);
-            const collection = db.collection(collectionName);
-            const count = await collection.countDocuments();
+            const count = await this.collection.countDocuments();
             return count;
         }
         catch(e) {
@@ -37,9 +38,8 @@ export default class MDB
 
     getCollection(collectionName) {
         try {
-            this.client.connect();
             const db = this.client.db(MDB.#DBNAME);
-            return db.collection(collectionName);
+            return this.collection(collectionName);
         }
         catch(e) {
             console.log(e);
@@ -60,7 +60,7 @@ export default class MDB
      * @returns 
      */
     issetCollection(collectionName) {
-        let result = this.db[collectionName];
+        let result = this.collection;
         this.mongoClient.close();
         return (result);
     }
@@ -86,13 +86,11 @@ export default class MDB
      * @param {number} limit 
      * @param {number} pageCount 
      */
-    async getValue(filter = {}, select = [], limit = false, pageCount = false) {
+    async getValue(filter = {}, select = [], limit = false, pageCount = false, sort = {}) {
         let ob = null;
-
-        if(collectionName == "") {
-            this.mongoClient.close();
-            return false;
-        }
+        let query = [];
+        let options = {};
+        let arResult = [];
 
         let request = [filter];
 
@@ -101,11 +99,13 @@ export default class MDB
             for (let key of select) {
                 arSelect[key] = 1;
             }
-            request.push(arSelect);
+            query.push(arSelect);
         }
 
-        
-        let options = {sort: {TITLE: 1}};
+        options.sort = {SORT: 1};
+
+        if(Object.keys(sort).length > 0)
+            options.sort = sort;
 
         if(limit)
             options.limit = limit;
@@ -113,7 +113,25 @@ export default class MDB
         if(pageCount)
             options.skip = pageCount;
 
-        ob = await this.collection.find(...request, options).toArray();
+        // let rc = await this.db.runCursorCommand({
+        //     find: this.collection,
+        //     filter: filter,
+        //     sort: {TITLE: 1},
+        //     limit: (limit > 0) ? limit : 0,
+        //     skip: (pageCount > 0) ? pageCount : 0,
+        //     returnKey: true,
+        //     awaitData: true
+        // });
+
+        // console.log(rc)
+
+        // while(rc.hasNext()) {
+        //     console.log(rc.next())
+        // }
+
+        ob = await this.collection.find(filter, query, {...options}).toArray();
+
+
         return ob;
     }
 
