@@ -1,3 +1,4 @@
 import brands from "./brands.js";
+import menu from "./menu.js";
 
-export default {brands};
+export default {brands, menu};

@@ -1,5 +1,6 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import Schema from '../schema/index.js';
+import Controll from './Controll.js';
 
 export default class MDB
 {
@@ -17,6 +18,7 @@ export default class MDB
         this.schema = Schema[collectionName];
         this.db = this.client.db(MDB.#DBNAME);
         this.collection = this.db.collection(collectionName);
+        this.schema = Schema[collectionName];
         console.log('DB connect success');
     }
 
@@ -87,7 +89,6 @@ export default class MDB
      * @param {number} pageCount 
      */
     async getValue(filter = {}, select = [], limit = false, pageCount = false, sort = {}) {
-        let ob = null;
         let query = [];
         let options = {};
         let arResult = [];
@@ -129,10 +130,13 @@ export default class MDB
         //     console.log(rc.next())
         // }
 
-        ob = await this.collection.find(filter, query, {...options}).toArray();
+        let unPreparedData = await this.collection.find(filter, query, {...options}).toArray();
+        let data = Controll.prepareData(unPreparedData, this.schema);
 
-
-        return ob;
+        return {
+            schema: this.schema,
+            data: data
+        };
     }
 
     static isJson(value) {
@@ -164,13 +168,7 @@ export default class MDB
         return id;
     }
 
-    async removeValue(key) {
-        //this.Init();
-        if(confirm('Удалить?')) {
-            this.collection.dropOne(key);
-        }
-            
-
-            //this.mongoClient.close();
+    async removeValue(_id) {
+        await this.collection.deleteOne({_id : new ObjectId(_id)})
     }
 }

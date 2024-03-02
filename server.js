@@ -37,7 +37,7 @@ app.use(morgan(':method :url :status :res[content-lenght] - :response-time ms'))
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Method', 'GET, POST'); 
+    res.setHeader('Access-Control-Allow-Method', 'GET, POST, DELETE, OPTIONS'); 
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
@@ -59,7 +59,7 @@ app.use((req, res, next) => {
 //    next();
 // });
 
-app.get('/api/get:CollectionName/', async (req, res) => {
+app.get('/api/:CollectionName/', async (req, res) => {
     let collectionName = req.params.CollectionName.toLowerCase();
 
     let result = {};
@@ -75,7 +75,8 @@ app.get('/api/get:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
-app.post('/api/set:CollectionName/', async (req, res) => {
+//POST REquest
+app.post('/api/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     const mdb = new FetchServer.MDB;
     const Controll = new FetchServer.Controll(collectionName);
@@ -83,6 +84,14 @@ app.post('/api/set:CollectionName/', async (req, res) => {
     mdb.Init(collectionName);
     const result = await mdb.setValue(Controll.preparePost(req.query));
     res.end();
+});
+
+//DELETE request
+app.get('/api/:CollectionName/:id/', async (req, res) => {
+    let collectionName = req.params.CollectionName.toLowerCase();
+    let mdb = new FetchServer.MDB(collectionName);
+    mdb.removeValue(req.params.id);
+    res.end('deleted');
 });
 
 //POST Request
