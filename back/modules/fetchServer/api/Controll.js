@@ -1,12 +1,42 @@
+import { ObjectId } from "mongodb";
+import schema from "../schema/index.js";
+
 export default class Controll {
 
     constructor(collectionName = '') {
         this.pathSchema = collectionName;
-        //import Schema from `../schema/{$collectionName}.js`;
+        this.schema = schema[collectionName];
     }
 
-    preparePost(query) {
-        return query;
+    showError(arr) {
+
+    }
+
+    preparePost(query = {}) {
+        let data = {};
+
+        if(query._id != "") {
+            data._id = new ObjectId(query._id);
+        }
+
+        if(Object.keys(query).length > 0 && Object.keys(this.schema).length > 0) {
+            for(let i in this.schema) {
+                if(i === '_id') continue;
+
+                let checkElement = query[i];
+                let checkSchema = this.schema[i];
+                
+                if(!checkElement || checkElement == '') {
+                    data[i] = checkSchema.default;
+                }
+                else {
+                    data[i] = checkElement;
+                }
+            }
+        }
+
+        console.log(data);
+        return data;
     }
 
     static prepareData(data = [], schema = {}) {

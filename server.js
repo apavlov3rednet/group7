@@ -3,6 +3,7 @@ import morgan from 'morgan';
 //import path from 'path';
 //const mogoose = require('mongoose');
 import FetchServer from './back/modules/fetchServer/index.js';
+import schema from './back/modules/fetchServer/schema/index.js';
 
 const app = express();
 //const router = express.Router();
@@ -31,7 +32,7 @@ app.use(morgan(':method :url :status :res[content-lenght] - :response-time ms'))
 
 // Методы для работы от сервера с публичной частью
 //app.set('back', 'back');
-//app.use(urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 //app.use(static(`back`));
 
 app.use((req, res, next) => {
@@ -75,15 +76,20 @@ app.get('/api/:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
+app.get('/api/schema/get/:Name/', async (req, res) => {
+    let obSchema = await schema[req.params.Name.toLowerCase()];
+    res.end(JSON.stringify(obSchema));
+});
+
 //POST REquest
 app.post('/api/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
-    const mdb = new FetchServer.MDB;
-    const Controll = new FetchServer.Controll(collectionName);
-    
-    mdb.Init(collectionName);
-    const result = await mdb.setValue(Controll.preparePost(req.query));
-    res.end();
+    let mdb = new FetchServer.MDB(collectionName);
+    const result = await mdb.setValue(req.body);
+
+    if(result.insertedId) {
+        res.redirect = req.url + '?id=' + result.insertedId;
+    }
 });
 
 //DELETE request

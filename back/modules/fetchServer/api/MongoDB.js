@@ -19,6 +19,7 @@ export default class MDB
         this.db = this.client.db(MDB.#DBNAME);
         this.collection = this.db.collection(collectionName);
         this.schema = Schema[collectionName];
+        this.controll = new Controll(collectionName);
         console.log('DB connect success');
     }
 
@@ -158,13 +159,16 @@ export default class MDB
      */
     async setValue(props = {}) {
         let id = 0;
+        let controllData = this.controll.preparePost(props);
 
-        if(Object.keys(props).length == 0 || collectionName == "") {
-            this.client.close();
-            return false;
-        }
         
-        id = await this.collection.insertOne(props);
+        if(controllData._id) { // UPDATE
+            id = controllData._id;
+        }
+        else { // ADD
+            id = await this.collection.insertOne(controllData);
+        }
+
         return id;
     }
 
