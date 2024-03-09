@@ -26,16 +26,24 @@ export default class Controll {
                 let checkElement = query[i];
                 let checkSchema = this.schema[i];
                 
-                if(!checkElement || checkElement == '') {
-                    data[i] = checkSchema.default;
+                if(checkElement != '') {
+                   switch(checkSchema.type) {
+                    case "Number":
+                        data[i] = parseFloat(checkElement);
+                    break;
+
+                    case "String":
+                        data[i] = String(checkElement);
+                    break;
+                   }
                 }
                 else {
-                    data[i] = checkElement;
+                    data[i] = checkSchema.default;
                 }
             }
         }
 
-        console.log(data);
+        console.log('DATA: ', data);
         return data;
     }
 

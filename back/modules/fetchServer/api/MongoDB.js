@@ -160,7 +160,6 @@ export default class MDB
     async setValue(props = {}) {
         let id = 0;
         let controllData = this.controll.preparePost(props);
-
         
         if(controllData._id) { // UPDATE
             id = controllData._id;

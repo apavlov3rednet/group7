@@ -1,7 +1,8 @@
 import { useCallback, useState, useEffect } from "react";
 import './style.css';
 
-export default function Table({nameTable}) {
+export default function Table({nameTable, onChange})
+{
     const [table, setTable] = useState({
         header: [],
         body: []
@@ -59,6 +60,16 @@ export default function Table({nameTable}) {
         )
     }
 
+    async function edit(e) {
+        const url = 'http://localhost:8000/api/' + nameTable + '/?id=' + e.target.value;
+        const response = await fetch(url);
+        const answer = await response.json();
+
+        console.log(answer);
+
+        onChange();
+    }
+
     async function dropElement(e) {
         const url = 'http://localhost:8000/api/' + nameTable + '/' + e.target.value + '/';
         const confirmWindow = window.confirm('Уверены?');
@@ -90,7 +101,7 @@ export default function Table({nameTable}) {
                             }
 
                             <td>
-                                <button className='edit' value={row._id}></button>
+                                <button className='edit' onClick={edit} value={row._id}></button>
                                 <button className='drop' onClick={dropElement} value={row._id}></button>
                             </td>
                         </tr>
