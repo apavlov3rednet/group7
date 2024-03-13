@@ -162,7 +162,11 @@ export default class MDB
         let controllData = this.controll.preparePost(props);
         
         if(controllData._id) { // UPDATE
-            id = controllData._id;
+            let result = await this.collection.updateOne(
+                { _id: controllData._id },
+                { $set: controllData }
+            );
+            id = result;
         }
         else { // ADD
             id = await this.collection.insertOne(controllData);

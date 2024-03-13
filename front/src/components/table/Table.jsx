@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 import './style.css';
+import config from "../../params/config";
 
 export default function Table({nameTable, onChange})
 {
@@ -11,7 +12,7 @@ export default function Table({nameTable, onChange})
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/' + nameTable + '/');
+        const response = await fetch(config.api + nameTable + '/');
         const dataTable = await response.json();
 
         const data = {
@@ -61,17 +62,14 @@ export default function Table({nameTable, onChange})
     }
 
     async function edit(e) {
-        const url = 'http://localhost:8000/api/' + nameTable + '/?id=' + e.target.value;
+        const url = config.api + nameTable + '/?id=' + e.target.value;
         const response = await fetch(url);
         const answer = await response.json();
-
-        console.log(answer);
-
-        onChange();
+        onChange(answer);
     }
 
     async function dropElement(e) {
-        const url = 'http://localhost:8000/api/' + nameTable + '/' + e.target.value + '/';
+        const url = config.api + nameTable + '/' + e.target.value + '/';
         const confirmWindow = window.confirm('Уверены?');
         if(confirmWindow) {
             const response = await fetch(url);

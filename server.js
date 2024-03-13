@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import FetchServer from './back/modules/fetchServer/index.js';
 import schema from './back/modules/fetchServer/schema/index.js';
 import { ObjectId } from 'mongodb';
+import config from './back/params/config.js';
 
 const app = express();
 //const router = express.Router();
@@ -60,7 +61,7 @@ app.post('/api/:CollectionName/', async (req, res) => {
     const result = await mdb.setValue(req.body);
 
     if(result.acknowledged) {
-        let newUrl = 'http://localhost:3000/?id=' + String(result.insertedId);
+        let newUrl = config.client + '?id=' + String(result.insertedId);
         res.statusCode = 304;
         res.redirect(newUrl);
     }

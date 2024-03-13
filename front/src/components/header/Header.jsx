@@ -3,7 +3,7 @@ import Logo from '../../images/logo.png';
 import './style.css';
 import Menu from '../menu/Menu';
 
-export default function Header(props) {
+export default function Header({ curPath }) {
     /**
      * Правила работы с хуками
      * 1. Нельзя писать вне компонента/класса
@@ -30,7 +30,7 @@ export default function Header(props) {
                 <h1>SPA</h1>
             </div>
 
-            <Menu />
+            <Menu curPath={curPath} />
 
             <div className='timer'>{ now.toLocaleTimeString() }</div>
         </header>
