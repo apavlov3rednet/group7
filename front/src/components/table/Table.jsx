@@ -6,7 +6,8 @@ export default function Table({nameTable, onChange})
 {
     const [table, setTable] = useState({
         header: [],
-        body: []
+        body: [],
+        sim: []
     });
     const [loading, setLoading] = useState(false);    
 
@@ -15,14 +16,16 @@ export default function Table({nameTable, onChange})
         const response = await fetch(config.api + nameTable + '/');
         const dataTable = await response.json();
 
+        console.log(dataTable)
         const data = {
             header: dataTable.schema,
-            body: dataTable.data
+            body: dataTable.data,
+            sim: dataTable.sim
         }
 
         setTable(data);
         setLoading(false);
-    }, [nameTable]);
+    }, [nameTable, onChange]);
 
     useEffect(
         () => {
@@ -61,6 +64,25 @@ export default function Table({nameTable, onChange})
         )
     }
 
+    function getContent(col, index, sim) {
+        let value = '';
+
+        console.log(col);
+
+        if(col.ref) {
+            console.log(sim)
+        }
+        else {
+            value = col;
+        }
+
+        return (
+            <td key={index}>
+                {value && value}
+            </td>
+        )
+    }
+
     async function edit(e) {
         const url = config.api + nameTable + '/?id=' + e.target.value;
         const response = await fetch(url);
@@ -92,9 +114,7 @@ export default function Table({nameTable, onChange})
                         <tr key={row._id} id={row._id}>
                             {
                             Object.values(row).map((col, index) => (
-                                <td key={index}>
-                                    {col && col}
-                                </td>
+                               getContent(col, index, table.sim)
                             ))
                             }
 

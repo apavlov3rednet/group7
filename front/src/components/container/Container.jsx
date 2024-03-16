@@ -1,25 +1,32 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Form from "../form/Form.jsx";
 import Table from "../table/Table.jsx";
 
-export default function Container({ curPath = '/' }) 
+export default function Container({ curPath }) 
 {
     const [row, setRow] = useState({});
-    const [collectionName, setCollectionName] = useState(curPath);
+    const [collectionName, setCollectionName] = useState(false);
 
     const handle = (value) => {
         if(value.data)
             setRow(value.data[0]);
     }
 
+    const setCollection = useCallback(async () => {
+        if(curPath !== 'index' && curPath !== '/')
+            setCollectionName(curPath);
+
+            console.log(collectionName);
+    });
+
     useEffect(
-        () => setCollectionName(curPath), [collectionName] 
+        () => {setCollection()}, [setCollection] 
     )
 
     return (
         <div className="container">
-            <Form arValue={row} nameForm={ collectionName }></Form>
-            <Table onChange={handle} nameTable={ collectionName }></Table>
+            {collectionName && <Form arValue={row} nameForm={ collectionName }></Form>}
+            {collectionName && <Table onChange={handle} nameTable={ collectionName }></Table>}
         </div>
     )
 }

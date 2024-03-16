@@ -115,29 +115,47 @@ export default class MDB
         if(pageCount)
             options.skip = pageCount;
 
-        // let rc = await this.db.runCursorCommand({
-        //     find: this.collection,
-        //     filter: filter,
-        //     sort: {TITLE: 1},
-        //     limit: (limit > 0) ? limit : 0,
-        //     skip: (pageCount > 0) ? pageCount : 0,
-        //     returnKey: true,
-        //     awaitData: true
-        // });
-
-        // console.log(rc)
-
-        // while(rc.hasNext()) {
-        //     console.log(rc.next())
-        // }
-
         let unPreparedData = await this.collection.find(filter, query, {...options}).toArray();
         let data = Controll.prepareData(unPreparedData, this.schema);
+        let simId = {};
+        let sim = [];
 
-        return {
+        data.forEach(item => {
+            for(let i in item) {
+                let keyElement = item[i];
+
+                if(keyElement.ref) {
+                    if(!simId[keyElement.collectionName])
+                        simId[keyElement.collectionName] = [];
+
+                    simId[keyElement.collectionName].push(new ObjectId(keyElement._id));
+                }
+            }
+        });
+
+        if(Object.keys(simId).length > 0) {
+            for(let collection in simId) {
+                let mdb = new MDB(collection);
+                let ids = simId[collection];
+                sim[collection] = [];
+
+                sim[collection] = await mdb.collection.find({
+                    _id: {
+                        $in: ids
+                    }
+                }).toArray();
+            }
+        }
+
+        console.log(sim);
+
+        let result = await {
             schema: this.schema,
-            data: data
-        };
+            data: data,
+            sim : JSON.stringify(sim)
+        }
+
+        return result;
     }
 
     static isJson(value) {

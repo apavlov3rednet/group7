@@ -6,18 +6,22 @@ export default function Form({nameForm, arValue = {}}) {
     //const shemaForm = schema[nameForm];
     const [schema, setSchema] = useState(null);
     const [formValue, setFormValue] = useState(arValue);
-    const url = config.api + nameForm + '/';
+    const [url, setUrl] = useState(config.api + nameForm + '/');
+    const [formName, setFormName] = useState(nameForm);
 
     useEffect(
         () => {
+
             async function fetchSchema() {
-                const response = await fetch(config.api + 'schema/get/' + nameForm + '/');
+                const response = await fetch(config.api + 'schema/get/' + formName + '/');
                 const answer = await response.json();
                 setSchema(answer);
             }
+            setFormName(nameForm);
+            setUrl(config.api + nameForm + '/');
             fetchSchema();
             setFormValue(arValue);
-        }, [nameForm, arValue]
+        }, [nameForm, arValue, formName]
     );
 
     function renderForm(data = {}, ar = {}) {
@@ -74,6 +78,7 @@ export default function Form({nameForm, arValue = {}}) {
     }
 
     return (
+        
         <form method="POST" action={url}>
             {renderForm(schema, formValue) }
 

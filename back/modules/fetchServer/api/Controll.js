@@ -57,7 +57,19 @@ export default class Controll {
                 for(let fieldName in schema) {
                     let fieldSchema = schema[fieldName];
                     let newData = (item[fieldName]) ? item[fieldName] : fieldSchema.default;
-                    newRow[fieldName] = newData;
+
+                    if(fieldSchema.type === 'DBRef') {
+                        let dbref = item[fieldName];
+                        newRow[fieldName] = {
+                            ref: true,
+                            collectionName: dbref.collection,
+                            _id: String(dbref.oid)
+                        }
+                     }
+                    else {
+                        newRow[fieldName] = newData;
+                    }
+                    
                 }
 
                 result.push(newRow);
