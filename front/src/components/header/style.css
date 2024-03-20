@@ -8,8 +8,8 @@ header {
 
 header .LogoGroup {
     display: flex;
-    flex-wrap: wrap;
     width: 60px;
+    gap:15px;
 }
 
 header .LogoGroup h1 {

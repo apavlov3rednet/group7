@@ -118,7 +118,7 @@ export default class MDB
         let unPreparedData = await this.collection.find(filter, query, {...options}).toArray();
         let data = Controll.prepareData(unPreparedData, this.schema);
         let simId = {};
-        let sim = [];
+        let sim = {};
 
         data.forEach(item => {
             for(let i in item) {
@@ -147,12 +147,10 @@ export default class MDB
             }
         }
 
-        console.log(sim);
-
         let result = await {
             schema: this.schema,
             data: data,
-            sim : JSON.stringify(sim)
+            sim : sim
         }
 
         return result;

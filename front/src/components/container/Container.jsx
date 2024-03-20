@@ -15,8 +15,6 @@ export default function Container({ curPath })
     const setCollection = useCallback(async () => {
         if(curPath !== 'index' && curPath !== '/')
             setCollectionName(curPath);
-
-            console.log(collectionName);
     });
 
     useEffect(

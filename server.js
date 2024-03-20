@@ -61,7 +61,7 @@ app.post('/api/:CollectionName/', async (req, res) => {
     const result = await mdb.setValue(req.body);
 
     if(result.acknowledged) {
-        let newUrl = config.client + '?id=' + String(result.insertedId);
+        let newUrl = config.client + collectionName + '?id=' + String(result.insertedId);
         res.statusCode = 304;
         res.redirect(newUrl);
     }

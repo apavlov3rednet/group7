@@ -15,13 +15,13 @@ export default function Table({nameTable, onChange})
         setLoading(true);
         const response = await fetch(config.api + nameTable + '/');
         const dataTable = await response.json();
-
-        console.log(dataTable)
         const data = {
             header: dataTable.schema,
             body: dataTable.data,
             sim: dataTable.sim
         }
+
+        console.log(data);
 
         setTable(data);
         setLoading(false);
@@ -64,13 +64,12 @@ export default function Table({nameTable, onChange})
         )
     }
 
-    function getContent(col, index, sim) {
+    function getContent(col, index, sim, schema) {
         let value = '';
 
-        console.log(col);
-
         if(col.ref) {
-            console.log(sim)
+            let val = sim[col.collectionName].filter(item => item._id === col._id)[0];
+            value = val.TITLE;
         }
         else {
             value = col;
@@ -114,7 +113,7 @@ export default function Table({nameTable, onChange})
                         <tr key={row._id} id={row._id}>
                             {
                             Object.values(row).map((col, index) => (
-                               getContent(col, index, table.sim)
+                               getContent(col, index, table.sim, table.header)
                             ))
                             }
 

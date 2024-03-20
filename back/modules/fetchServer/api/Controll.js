@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { DBRef, ObjectId } from "mongodb";
 import schema from "../schema/index.js";
 
 export default class Controll {
@@ -33,7 +33,13 @@ export default class Controll {
                     break;
 
                     case "String":
+                        case 'Phone':
+                            case 'Email':
                         data[i] = String(checkElement);
+                    break;
+
+                    case 'DBRef':
+                        data[i] = new DBRef(checkSchema.collection, new ObjectId(checkElement));
                     break;
                    }
                 }
@@ -42,8 +48,6 @@ export default class Controll {
                 }
             }
         }
-
-        console.log('DATA: ', data);
         return data;
     }
 
