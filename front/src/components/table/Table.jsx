@@ -21,8 +21,6 @@ export default function Table({nameTable, onChange})
             sim: dataTable.sim
         }
 
-        console.log(data);
-
         setTable(data);
         setLoading(false);
     }, [nameTable, onChange]);
@@ -69,10 +67,32 @@ export default function Table({nameTable, onChange})
 
         if(col.ref) {
             let val = sim[col.collectionName].filter(item => item._id === col._id)[0];
-            value = val.TITLE;
+
+            if(val && val.TITLE)
+                value = val.TITLE;
         }
         else {
             value = col;
+
+            let getIndex = 0;
+            let curSchema = 0;
+            for(let i in schema) {
+                if(getIndex === index) {
+                    curSchema = schema[i];
+                }
+                getIndex++;
+            }
+
+            if(curSchema.type === 'Email') {
+                let mailTo = 'mailto:' + col;
+                value = <a href={mailTo}>{col}</a>
+            }
+            
+            if(curSchema.type === 'Phone') {
+                let callTo = 'tel:' + col;
+                value = <a href={callTo}>{col}</a>
+            }
+            
         }
 
         return (

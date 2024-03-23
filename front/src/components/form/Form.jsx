@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import './style.css';
 import config from "../../params/config";
+import InputMask from 'react-input-mask';
+//import MaterialInput from '@material-ui/core/Input';
 
 export default function Form({nameForm, arValue = {}}) {
     //const shemaForm = schema[nameForm];
     const [schema, setSchema] = useState(null);
-    const [formValue, setFormValue] = useState(arValue);
+    const [formValue, setFormValue] = useState({});
     const [url, setUrl] = useState(config.api + nameForm + '/');
     const [formName, setFormName] = useState(nameForm);
-    const [render, setRender] = useState(false);
+    const [edit, setEdit] = useState(false);
+    const [disabled, setDisabled] = useState(true);
 
     useEffect(
         () => {
@@ -32,8 +35,13 @@ export default function Form({nameForm, arValue = {}}) {
             setFormName(nameForm);
             setUrl(config.api + nameForm + '/');
             fetchSchema();
-            setFormValue(arValue);
-        }, [nameForm, arValue, formName, render]
+            if(Object.keys(arValue).length > 0) {
+                setFormValue(arValue);
+                setEdit(true);
+                setDisabled(false);
+            }
+            
+        }, [nameForm, arValue, formName]
     );
 
     function renderForm(data = {}, ar = {}, rand = 0) {
@@ -81,12 +89,15 @@ export default function Form({nameForm, arValue = {}}) {
                 {
                     formElements.map((item, index) => (
                         <label key={index} htmlFor={item.code}>
-                            <span>{item.loc}</span>
-                            {item.fieldType !== 'select' && <input type={item.fieldType} 
+                            <span>{item.loc} {item.require && '*'}</span>
+                            {item.fieldType !== 'select' && item.fieldType !== 'tel' && <input type={item.fieldType} 
                                 required={(item.require) ? true : false}
                                 defaultValue={item.value && item.value}
-                                step={(item.fieldType === 'number') ? '1000' : null}
+                                step={(item.fieldType === 'number') ? item.step : null}
                                 name={item.code} />}
+
+                                {item.fieldType === 'tel' && <InputMask required={(item.require) ? true : false}
+                                defaultValue={item.value && item.value} name={item.code}  mask="+7(999)-999-99-99" maskChar="_" />}
 
                             {item.fieldType === 'select' && <select name={item.code}>{item.list}</select>}
                         </label>
@@ -114,16 +125,37 @@ export default function Form({nameForm, arValue = {}}) {
 
     function resetForm(event) {
         event.preventDefault();
+        setFormValue({});
+        renderForm(schema, {});
+        setEdit(false);
+        setDisabled(true);
+    }
 
-        setRender(Math.random(4));
+    function checkRequired(event) {
+        let form = event.target.closest('form'); //Ищет ближайшего родителя по тегу, классу или идентификатору
+        let formElements = form.querySelectorAll('input, select, textarea');
+        let error = 0;
+
+        formElements.forEach(item => {
+            if(item.required === true && (item.value == "0" || item.value === '')) {
+                setDisabled(true);
+                error++;
+            }
+        });
+
+        if(error === 0)
+            setDisabled(false);
     }
 
     return (
         
-        <form method="POST" action={url}>
-            {renderForm(schema, formValue, render) }
+        <form method="POST" action={url} onChange={checkRequired}>
+            {renderForm(schema, formValue) }
 
-            <button>Сохранить</button>
+            <button disabled={disabled && disabled}>
+                {!edit && 'Сохранить'}
+                {edit && 'Изменить'}
+            </button>
             <button onClick={resetForm}>Сбросить</button>
         </form>
     )
