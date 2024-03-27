@@ -32,8 +32,6 @@ app.get('/api/:CollectionName/', async (req, res) => {
     let result = {};
     let mdb = new FetchServer.MDB(collectionName);
 
-    console.log(req.query);
-
     let filter = {},
         select = [],
         limit = req.query.limit ? req.query.limit : false,
@@ -46,6 +44,10 @@ app.get('/api/:CollectionName/', async (req, res) => {
     result = await mdb.getValue(filter, select, limit, skip);
 
     res.end(JSON.stringify(result));
+});
+
+app.get('/api/collection/get/:operation/', async(req, res) => {
+    console.log(req.params.operation)
 });
 
 app.get('/api/schema/get/:Name/', async (req, res) => {

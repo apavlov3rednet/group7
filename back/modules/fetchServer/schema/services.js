@@ -10,7 +10,7 @@ const services = {
     },
     DATE: {
         type: 'Date',
-        default: date('Y-m-d'),
+        default: '',
         loc: 'Дата обращения',
         sort: true,
         editable: true,
@@ -27,21 +27,37 @@ const services = {
     PRICE: {
         type: 'Number',
             require: true,
-            default: 'None',
+            default: 0,
             loc: "Цена",
             sort: true,
             editable: true,
-            step: 100
+            step: 100,
+        sim: 'TOTAL'    
     },
     COUNT: {
         type: 'Number',
             require: true,
-            default: 'None',
+            default: 0,
             loc: "Количество (шт)",
             sort: true,
             editable: true,
-            step: 1
+            step: 1,
+            sim: 'TOTAL'   
     },
+    TOTAL: {
+        type: 'Number',
+        require: true,
+        default: 0,
+        loc: 'Сумма',
+        sort: true,
+        editable: true,
+        readOnly: true,
+        method: 'MULTIPLY',
+        fields: [
+            'COUNT', 'PRICE'
+        ],
+        mask: 'COUNT * PRICE'
+    }
        
     };
 

@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import './style.css';
 import config from "../../params/config";
 import InputMask from 'react-input-mask';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 //import MaterialInput from '@material-ui/core/Input';
+import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import { ru } from 'date-fns/locale/ru';
+registerLocale('ru-RU', ru)
 
 export default function Form({nameForm, arValue = {}}) {
     //const shemaForm = schema[nameForm];
@@ -12,6 +17,7 @@ export default function Form({nameForm, arValue = {}}) {
     const [formName, setFormName] = useState(nameForm);
     const [edit, setEdit] = useState(false);
     const [disabled, setDisabled] = useState(true);
+    const [startDate, setStartDate] = useState(new Date());
 
     useEffect(
         () => {
@@ -56,23 +62,33 @@ export default function Form({nameForm, arValue = {}}) {
             switch(newRow.type) {
                 case 'String':
                     newRow.fieldType = 'text';
+                    newRow.field = 'field';
                 break;
 
                 case 'Number':
                     newRow.fieldType = 'number';
+                    newRow.field = 'field';
                 break;
 
                 case 'Phone':
                     newRow.fieldType = 'tel';
+                    newRow.field = 'tel';
                 break;
 
                 case 'Email':
                     newRow.fieldType = 'email';
+                    newRow.field = 'field';
                 break;
 
                 case 'DBRef':
                     newRow.fieldType = 'select';
+                    newRow.field = 'select';
                     newRow.list = renderSelect(newRow);
+                break;
+
+                case 'Date':
+                    newRow.fieldType = 'date';
+                    newRow.field = 'date';
                 break;
 
                 case 'Hidden':
@@ -90,21 +106,68 @@ export default function Form({nameForm, arValue = {}}) {
                     formElements.map((item, index) => (
                         <label key={index} htmlFor={item.code}>
                             <span>{item.loc} {item.require && '*'}</span>
-                            {item.fieldType !== 'select' && item.fieldType !== 'tel' && <input type={item.fieldType} 
-                                required={(item.require) ? true : false}
-                                defaultValue={item.value && item.value}
-                                step={(item.fieldType === 'number') ? item.step : null}
-                                name={item.code} />}
+                            {
+                                item.field === 'field' && <input type={item.fieldType} 
+                                    required={(item.require) ? true : false}
+                                    defaultValue={item.value && item.value}
+                                    onChange={item.sim && callMethod}
+                                    readOnly={item.readOnly && true}
+                                    step={(item.fieldType === 'number') ? item.step : null}
+                                    name={item.code} />
+                            }
 
-                                {item.fieldType === 'tel' && <InputMask required={(item.require) ? true : false}
-                                defaultValue={item.value && item.value} name={item.code}  mask="+7(999)-999-99-99" maskChar="_" />}
+                            {
+                                item.field === 'tel' && <InputMask required={(item.require) ? true : false}
+                                    defaultValue={item.value && item.value} name={item.code}  mask="+7(999)-999-99-99" maskChar="_" />
+                            }
 
-                            {item.fieldType === 'select' && <select name={item.code}>{item.list}</select>}
+                            {
+                                item.field === 'select' && <select name={item.code}>{item.list}</select>
+                            }
+
+                            {
+                                item.field === 'date' && <DatePicker 
+                                    selected={startDate} 
+                                    locale="ru-RU"
+                                    dateFormat='dd.MM.yyyy'
+                                    name={item.code}
+                                    required={item.require && true }
+                                    defaultValue={item.value && item.value}
+                                    onChange={(date) => setStartDate(date)} />
+                            }
                         </label>
                     ))
                 }
             </>
         )
+    }
+
+    function callMethod(event) {
+        let form = event.target.closest('form');
+        let name = event.target.name;
+        let obSchema = schema;
+        let curSchemaSim = obSchema[name].sim;
+        let total = form.querySelector('input[name=' +curSchemaSim+ ']');
+        let value = 0;
+
+        if(curSchemaSim) {
+            let method = obSchema[curSchemaSim].method;
+            let arSimFields = obSchema[curSchemaSim].fields;
+            let arFields = [];
+
+            arSimFields.forEach(item => {
+                arFields.push(form.querySelector('input[name=' + item +']'));
+            });
+
+            switch(method) {
+                case 'MULTIPLY':
+                    value = arFields[0].value * arFields[1].value;
+                break;
+            }
+
+            total.value = value;
+        }
+
     }
 
     function renderSelect(ar) {

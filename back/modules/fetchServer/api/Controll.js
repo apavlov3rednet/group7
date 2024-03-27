@@ -15,7 +15,7 @@ export default class Controll {
     preparePost(query = {}) {
         let data = {};
 
-        if(query._id != "") {
+        if(query._id) {
             data._id = new ObjectId(query._id);
         }
 
@@ -38,7 +38,11 @@ export default class Controll {
                         data[i] = String(checkElement);
                     break;
 
-            
+                    case 'Date':
+                        let d = checkElement.split('.');
+                        data[i] = new Date(d[2], d[1]-1, d[0]);
+                        //data[i] = checkElement;
+                    break;
 
                     case 'DBRef':
                         data[i] = new DBRef(checkSchema.collection, new ObjectId(checkElement));
@@ -50,6 +54,7 @@ export default class Controll {
                 }
             }
         }
+
         return data;
     }
 
