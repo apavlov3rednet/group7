@@ -15,11 +15,14 @@ export default class MDB
         const url = [MDB.#LOCATION, MDB.#PORT].join(':') + '/';
         this.client = new MongoClient(url);
         this.client.connect();
-        this.schema = Schema[collectionName];
         this.db = this.client.db(MDB.#DBNAME);
-        this.collection = this.db.collection(collectionName);
-        this.schema = Schema[collectionName];
-        this.controll = new Controll(collectionName);
+
+        if(collectionName != '') {
+            this.collection = this.db.collection(collectionName);
+            this.schema = Schema[collectionName];
+            this.controll = new Controll(collectionName);
+        }
+        
         console.log('DB connect success');
     }
 
@@ -39,10 +42,24 @@ export default class MDB
        
     }
 
-    getCollection(collectionName) {
+    async getCollectionInfo() {
         try {
-            const db = this.client.db(MDB.#DBNAME);
-            return this.collection(collectionName);
+            let name = this.collection.namespace.split('.');
+            let indexes = await this.collection.indexes();
+            let countDocuments = await this.collection.countDocuments();
+
+            // let cursor = this.collection.find({});
+            // let totalSizeInBytes = 0;
+
+            // await cursor.forEach(doc => {
+            //     totalSizeInBytes += Object.bsonsize(doc);
+            // })
+
+            return {
+                TITLE: name[1],
+                INDEXES: indexes.length,
+                DOCUMENTS: countDocuments
+            }
         }
         catch(e) {
             console.log(e);
@@ -80,6 +97,30 @@ export default class MDB
         return collection;
     }
 
+    async test(c) {
+        let t = [];
+        c.forEach(async collection => {
+            let mdb = new MDB(collection.name);
+            let name = mdb.collection.namespace.split('.');
+            let indexes = await mdb.collection.indexes();
+            let countDocuments = await mdb.collection.countDocuments();
+
+            t.push({
+                TITLE: name[1],
+                INDEXES: indexes.length,
+                DOCUMENTS: countDocuments
+            });
+        });
+
+        return await t;
+    }
+
+    async getCollections() {
+        let requestCollections = await this.db.listCollections().toArray();
+        let arCollections = await this.test(requestCollections);
+        
+        console.log(arCollections);
+    }
 
     /**
      * 

@@ -46,8 +46,12 @@ app.get('/api/:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
-app.get('/api/collection/get/:operation/', async(req, res) => {
-    console.log(req.params.operation)
+app.get('/api/collection/get/list/', async(req, res) => {
+    //console.log(req.params.operation);
+    let mdb = new FetchServer.MDB();
+    mdb.getCollections();
+
+    res.end();
 });
 
 app.get('/api/schema/get/:Name/', async (req, res) => {

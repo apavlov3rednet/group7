@@ -5,7 +5,7 @@ import InputMask from 'react-input-mask';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 //import MaterialInput from '@material-ui/core/Input';
-import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import { registerLocale } from  "react-datepicker";
 import { ru } from 'date-fns/locale/ru';
 registerLocale('ru-RU', ru)
 
@@ -198,6 +198,8 @@ export default function Form({nameForm, arValue = {}}) {
         let form = event.target.closest('form'); //Ищет ближайшего родителя по тегу, классу или идентификатору
         let formElements = form.querySelectorAll('input, select, textarea');
         let error = 0;
+        
+        console.log(event);
 
         formElements.forEach(item => {
             if(item.required === true && (item.value == "0" || item.value === '')) {

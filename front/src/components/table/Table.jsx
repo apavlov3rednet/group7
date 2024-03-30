@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
+import { CChart } from '@coreui/react-chartjs'
 import './style.css';
 import config from "../../params/config";
 
@@ -9,6 +10,7 @@ export default function Table({nameTable, onChange})
         body: [],
         sim: []
     });
+    const [pie, setPie] = useState({});
     const [loading, setLoading] = useState(false);    
 
     const fetchTable = useCallback(async () => {
@@ -21,6 +23,15 @@ export default function Table({nameTable, onChange})
             sim: dataTable.sim
         }
 
+        let title = [];
+        let budget = [];
+
+        data.body.forEach(item => {
+            title.push(item.TITLE);
+            budget.push(item.BUDGET)
+        });
+
+        setPie({title: title, budget: budget});
         setTable(data);
         setLoading(false);
     }, [nameTable, onChange]);
@@ -127,6 +138,7 @@ export default function Table({nameTable, onChange})
     }
 
     return(
+        <>
         <table className="simple-table">
             <thead>
                 {!loading && getHeader(table.header)}
@@ -150,5 +162,28 @@ export default function Table({nameTable, onChange})
                 }
             </tbody>
         </table>
+        
+        <CChart
+            type="doughnut"
+            data={{
+                labels: pie.title,
+                datasets: [
+                {
+                    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+                    data: pie.budget,
+                },
+                ],
+            }}
+            options={{
+                plugins: {
+                legend: {
+                    labels: {
+                    //color: getStyle('--cui-body-color'),
+                    }
+                }
+                },
+            }}
+            />
+        </>
     )
 }

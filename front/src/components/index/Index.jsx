@@ -8,10 +8,10 @@ export default function Index()
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch(config.api + '/collection/get/list/');
-        const dataTable = await response.json();
-        setTable(dataTable);
-        setLoading(false);
+        const response = await fetch(config.api + 'collection/get/list/');
+        //const dataTable = await response.json();
+        // setTable(dataTable);
+         setLoading(false);
     }, []);
 
     useEffect(
