@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import FetchServer from './back/modules/fetchServer/index.js';
 import schema from './back/modules/fetchServer/schema/index.js';
-import { ObjectId } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import config from './back/params/config.js';
 
 const app = express();
@@ -26,7 +26,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/api/:CollectionName/', async (req, res) => {
+
+app.get('/api/get/:CollectionName/', async (req, res) => {
     let collectionName = req.params.CollectionName.toLowerCase();
 
     let result = {};
@@ -46,21 +47,21 @@ app.get('/api/:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
-app.get('/api/collection/get/list/', async(req, res) => {
-    //console.log(req.params.operation);
+app.get('/api/get/collection/list/', async(req, res) => {
     let mdb = new FetchServer.MDB();
-    mdb.getCollections();
-
-    res.end();
+    await mdb.getCollectionStats().then(result => {
+        res.end(JSON.stringify(result));
+    });
 });
 
-app.get('/api/schema/get/:Name/', async (req, res) => {
+
+app.get('/api/get/schema/:Name/', async (req, res) => {
     let obSchema = await schema[req.params.Name.toLowerCase()];
     res.end(JSON.stringify(obSchema));
 });
 
 //POST REquest
-app.post('/api/:CollectionName/', async (req, res) => {
+app.post('/api/post/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     let mdb = new FetchServer.MDB(collectionName);
 

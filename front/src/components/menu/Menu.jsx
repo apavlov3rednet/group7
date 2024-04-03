@@ -6,7 +6,7 @@ export default function Menu({curPath}) {
     const [menu, setMenu] = useState([]);
 
     const fetchMenu = useCallback(async () => {
-        const response = await fetch(config.api + 'Menu/');
+        const response = await fetch(config.api + 'get/Menu/');
         const answer = await response.json();
         setMenu(answer.data);
     }, []);

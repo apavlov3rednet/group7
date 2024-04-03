@@ -13,7 +13,7 @@ export default function Form({nameForm, arValue = {}}) {
     //const shemaForm = schema[nameForm];
     const [schema, setSchema] = useState(null);
     const [formValue, setFormValue] = useState({});
-    const [url, setUrl] = useState(config.api + nameForm + '/');
+    const [url, setUrl] = useState(config.api + 'post/' + nameForm + '/');
     const [formName, setFormName] = useState(nameForm);
     const [edit, setEdit] = useState(false);
     const [disabled, setDisabled] = useState(true);
@@ -23,14 +23,14 @@ export default function Form({nameForm, arValue = {}}) {
         () => {
 
             async function fetchSchema() {
-                const response = await fetch(config.api + 'schema/get/' + formName + '/');
+                const response = await fetch(config.api + 'get/schema/' + formName + '/');
                 const answer = await response.json();
 
                 for(let key in answer) {
                     let el = answer[key];
 
                     if(el.type === 'DBRef') {
-                        let mdb = await fetch(config.api + el.collection + '/');
+                        let mdb = await fetch(config.api + 'get/' + el.collection + '/');
                         let ar = await mdb.json();
                         answer[key].arList = ar.data;
                     }
@@ -39,7 +39,7 @@ export default function Form({nameForm, arValue = {}}) {
                 setSchema(answer);
             }
             setFormName(nameForm);
-            setUrl(config.api + nameForm + '/');
+            setUrl(config.api + 'post/' + nameForm + '/');
             fetchSchema();
             if(Object.keys(arValue).length > 0) {
                 setFormValue(arValue);

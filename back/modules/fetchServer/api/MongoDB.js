@@ -42,30 +42,6 @@ export default class MDB
        
     }
 
-    async getCollectionInfo() {
-        try {
-            let name = this.collection.namespace.split('.');
-            let indexes = await this.collection.indexes();
-            let countDocuments = await this.collection.countDocuments();
-
-            // let cursor = this.collection.find({});
-            // let totalSizeInBytes = 0;
-
-            // await cursor.forEach(doc => {
-            //     totalSizeInBytes += Object.bsonsize(doc);
-            // })
-
-            return {
-                TITLE: name[1],
-                INDEXES: indexes.length,
-                DOCUMENTS: countDocuments
-            }
-        }
-        catch(e) {
-            console.log(e);
-        }
-    }
-
     getCount(key) {
         let values = MDB.getValue(key);
         if(values instanceof Array)
@@ -95,31 +71,6 @@ export default class MDB
         let collection = await this.db.createCollection(nameCollection, params);
         this.mongoClient.close();
         return collection;
-    }
-
-    async test(c) {
-        let t = [];
-        c.forEach(async collection => {
-            let mdb = new MDB(collection.name);
-            let name = mdb.collection.namespace.split('.');
-            let indexes = await mdb.collection.indexes();
-            let countDocuments = await mdb.collection.countDocuments();
-
-            t.push({
-                TITLE: name[1],
-                INDEXES: indexes.length,
-                DOCUMENTS: countDocuments
-            });
-        });
-
-        return await t;
-    }
-
-    async getCollections() {
-        let requestCollections = await this.db.listCollections().toArray();
-        let arCollections = await this.test(requestCollections);
-        
-        console.log(arCollections);
     }
 
     /**
@@ -234,5 +185,30 @@ export default class MDB
 
     async removeValue(_id) {
         await this.collection.deleteOne({_id : new ObjectId(_id)})
+    }
+
+    async getCollectionStats() {
+        let result = [];
+        let sources = await this.db.listCollections().toArray();
+
+        for(const source of sources) {
+            const mdb = new MDB(source.name);
+            const data = await mdb.getCollectonInfo();
+            result.push(data);
+        }
+
+        return result;
+    }
+
+    async getCollectonInfo() {
+        let _this = this;
+
+        return new Promise(async resolve => {
+            resolve({
+                TITLE: _this.collection.namespace,
+                INDEXES: (await _this.collection.indexes()).length,
+                DOCUMENTS: await _this.collection.countDocuments()
+            });
+        });
     }
 }

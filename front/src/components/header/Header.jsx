@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Logo from '../../images/logo.png';
 import './style.css';
 import Menu from '../menu/Menu';
+import lang from './lang.js';
 
 export default function Header({ curPath }) {
     /**
@@ -24,6 +25,7 @@ export default function Header({ curPath }) {
     )
 
     return (
+        <>
         <header>
             <div className='LogoGroup'>
                 <img src={Logo} width="40px" alt="" />
@@ -34,5 +36,10 @@ export default function Header({ curPath }) {
 
             <div className='timer'>{ now.toLocaleTimeString() }</div>
         </header>
+        <h2>
+            {curPath != "" && lang[curPath]}
+            {curPath === "" && lang.index}
+        </h2>
+        </>
     )
 }

@@ -15,7 +15,7 @@ export default function Table({nameTable, onChange})
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch(config.api + nameTable + '/');
+        const response = await fetch(config.api + 'get/' + nameTable + '/');
         const dataTable = await response.json();
         const data = {
             header: dataTable.schema,
@@ -118,7 +118,7 @@ export default function Table({nameTable, onChange})
     }
 
     async function edit(e) {
-        const url = config.api + nameTable + '/?id=' + e.target.value;
+        const url = config.api + 'get/' + nameTable + '/?id=' + e.target.value;
         const response = await fetch(url);
         const answer = await response.json();
         onChange(answer);
@@ -162,28 +162,6 @@ export default function Table({nameTable, onChange})
                 }
             </tbody>
         </table>
-        
-        <CChart
-            type="doughnut"
-            data={{
-                labels: pie.title,
-                datasets: [
-                {
-                    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                    data: pie.budget,
-                },
-                ],
-            }}
-            options={{
-                plugins: {
-                legend: {
-                    labels: {
-                    //color: getStyle('--cui-body-color'),
-                    }
-                }
-                },
-            }}
-            />
         </>
     )
 }
