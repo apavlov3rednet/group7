@@ -1,6 +1,11 @@
 .simple-table {
     margin:20px auto;
     border:0;
+    width: calc(-400px + 100%);
+}
+
+.simple-table tr {
+    height: max-content;
 }
 
 .simple-table thead th {

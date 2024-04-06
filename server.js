@@ -29,20 +29,23 @@ app.use((req, res, next) => {
 
 app.get('/api/get/:CollectionName/', async (req, res) => {
     let collectionName = req.params.CollectionName.toLowerCase();
-
-    let result = {};
+    let options = {};
     let mdb = new FetchServer.MDB(collectionName);
 
-    let filter = {},
-        select = [],
-        limit = req.query.limit ? req.query.limit : false,
-        skip = req.query.skip ? req.query.skip : false;
+    if(req.query) {
 
-    if(req.query && req.query.id) {
-        filter._id = new ObjectId(req.query.id);
+        //get by id element
+        if(req.query.id) {
+            options.filter._id = new ObjectId(req.query.id);
+        }
+        
+        //search
+        if(req.query.q != "") {
+            options.search = req.query.q;
+        }
     }
 
-    result = await mdb.getValue(filter, select, limit, skip);
+    let result = await mdb.getValue(options);
 
     res.end(JSON.stringify(result));
 });

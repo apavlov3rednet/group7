@@ -81,33 +81,36 @@ export default class MDB
      * @param {number} limit 
      * @param {number} pageCount 
      */
-    async getValue(filter = {}, select = [], limit = false, pageCount = false, sort = {}) {
-        let query = [];
-        let options = {};
-        let arResult = [];
+    async getValue(options = {}) {
+        if(!this.collection)
+            return {};
 
-        let request = [filter];
+        //дефолтный фильтр
+        let filter = options.filter ? options.filter : {};
 
-        if(select.length > 0) {
-            let arSelect = {};
-            for (let key of select) {
-                arSelect[key] = 1;
+        //поисковый запрос
+        if(options.search && options.search.length > 1) {
+            let arLine = options.search.split(' ').join('|')
+            let query = new RegExp(arLine);
+
+            let xor = [];
+
+            for(let index in this.schema) {
+                let item = this.schema[index];
+
+                if(item.searchable) {
+                    let el = {};
+                    el[index] = { $regex: query, $options: 'i' };
+                    xor.push(el);
+                }
             }
-            query.push(arSelect);
+
+            filter = { 
+                $or: [...xor]
+            }
         }
 
-        options.sort = {SORT: 1};
-
-        if(Object.keys(sort).length > 0)
-            options.sort = sort;
-
-        if(limit)
-            options.limit = limit;
-
-        if(pageCount)
-            options.skip = pageCount;
-
-        let unPreparedData = await this.collection.find(filter, query, {...options}).toArray();
+        let unPreparedData = await this.collection.find(filter).toArray();
         let data = Controll.prepareData(unPreparedData, this.schema);
         let simId = {};
         let sim = {};

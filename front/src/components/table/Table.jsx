@@ -3,7 +3,7 @@ import { CChart } from '@coreui/react-chartjs'
 import './style.css';
 import config from "../../params/config";
 
-export default function Table({nameTable, onChange})
+export default function Table({nameTable, onChange, query = ''})
 {
     const [table, setTable] = useState({
         header: [],
@@ -15,7 +15,13 @@ export default function Table({nameTable, onChange})
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch(config.api + 'get/' + nameTable + '/');
+        let urlRequest = config.api + 'get/' + nameTable + '/';
+
+        if(query != '') {
+            urlRequest += '?q=' + query;
+        }
+
+        const response = await fetch(urlRequest);
         const dataTable = await response.json();
         const data = {
             header: dataTable.schema,
@@ -34,7 +40,7 @@ export default function Table({nameTable, onChange})
         setPie({title: title, budget: budget});
         setTable(data);
         setLoading(false);
-    }, [nameTable, onChange]);
+    }, [nameTable, onChange, query]);
 
     useEffect(
         () => {
