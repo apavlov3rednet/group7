@@ -44,7 +44,7 @@
 }
 
 .modal {
-    width:300px;
+    width:600px;
     height:400px;
     position:fixed;
     margin:auto;
@@ -92,4 +92,36 @@
     left: 0;
     right: 0;
     top: -3px;
+}
+
+.modal form {
+    margin:15px;
+}
+
+.modal form label {
+    width:100%;
+    gap:15px;
+    display:flex;
+}
+
+.modal form .rangeGroup {
+    width:33.3333%;
+}
+
+.modal form .rangeGroup input {
+    width:100%;
+    margin-bottom:10px;
+}
+
+.modal form .rangeGroup datalist {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size:10px;
+    width:100%;
+}
+
+.modal form .rangeGroup datalist .curValue {
+    font-size:12px;
+    font-weight: bold;
 }

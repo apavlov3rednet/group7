@@ -5,6 +5,8 @@ import './style.css';
 export default function Search({ onChange, nameCollection }) {
 
     const [schema, setSchema] = useState(null);
+    const [min, setMin] = useState(0);
+    const [max, setMax] = useState(0);
 
     useEffect(
         () => {
@@ -21,7 +23,21 @@ export default function Search({ onChange, nameCollection }) {
                         let ar = await mdb.json();
                         answer[key].arList = ar.data;
                     }
+
+                    if(el.filter && el.type === 'Number') {
+                        let minRequest = await fetch(config.api+ 'get/' + nameCollection + "/?min=" + key); //key === BUDGET
+                        let minValue = await minRequest.json();
+                        let maxRequest = await fetch(config.api+ 'get/' + nameCollection + "/?max=" + key); //key === BUDGET
+                        let maxValue = await maxRequest.json();
+
+                        answer[key].limits = {
+                            min: minValue.data[0][key],
+                            max: maxValue.data[0][key]
+                        }
+                    }
                 }
+
+                console.log(answer);
 
                 setSchema(answer);
             }
@@ -41,6 +57,123 @@ export default function Search({ onChange, nameCollection }) {
         overlay.classList.toggle('show');
     }
 
+    function changeValue(event) {
+        let field = event.target;
+        let parent = field.closest('label');
+        let key = field.id.split('_');
+
+        if(key[1] === 'MIN') {
+            let obSim = parent.querySelector('#' + key[0] + '_MAX');
+
+            if(obSim.value <= field.value) {
+                let maxValue = parseInt(field.value) + parseInt(obSim.step);
+
+                if(maxValue > parseInt(field.max)) {
+                    maxValue = parseInt(field.max);
+                }
+                setMax(maxValue);
+            }
+
+            if(field.value >= field.max) {
+                setMin(parseInt(field.value) - parseInt(field.step));
+            }
+            else {
+                setMin(field.value);
+            }  
+        }
+
+        if(key[1] === 'MAX') {
+            let obSim = parent.querySelector('#' + key[0] + '_MIN');
+
+            if(obSim.value >= field.value) {
+                let minValue = parseInt(field.value) - parseInt(obSim.step);
+
+                if(minValue > parseInt(field.min)) {
+                    minValue = parseInt(field.min);
+                }
+                setMin(minValue);
+            }
+
+            if(field.value >= field.max) {
+                setMax(parseInt(field.value) + parseInt(field.step));
+            }
+            else {
+                setMax(field.value);
+            }  
+        }
+    }
+
+    function renderFilter(data = {}) {
+        let formElements = [];
+        for(let i in data) {
+            let newRow = data[i];
+
+            newRow.code = i;
+
+            if(newRow.filter) {
+                switch(newRow.type) {
+                    case 'Number':
+                        newRow.fieldType = 'number';
+                        newRow.field = 'range';
+                    break;
+                }
+                
+                formElements.push(newRow);
+            }
+        }
+
+        return (
+            <>
+                {
+                    formElements.map((item, index) => (
+                        <label key={index}>
+                            <span>{item.loc}</span>
+                            <div className="rangeGroup">
+                                от: <input 
+                                    type={item.field}
+                                    step={item.step ? item.step : null}
+                                    min={item.limits.min}
+                                    max={item.limits.max}
+                                    defaultValue={min}
+                                    value={min}
+                                    list={item.code + '_MIN'}
+                                    id={item.code + '_MIN'}
+                                    name={item.code + '[MIN]'}
+                                    onChange={changeValue}
+                                />
+                                <datalist id={item.code + '_MIN'}>
+                                    <option value={item.limits.min} label={item.limits.min}></option>
+                                    <option className="curValue" defaultValue={min} label={min}></option>
+                                    <option value={item.limits.max} label={item.limits.max}></option>
+                                </datalist>
+                            </div>
+
+                            <div className="rangeGroup">
+                                до: <input 
+                                    type={item.field}
+                                    step={item.step ? item.step : null}
+                                    min={item.limits.min}
+                                    max={item.limits.max}
+                                    defaultValue={max}
+                                    value={max}
+                                    list={item.code + '_MAX'}
+                                    id={item.code + '_MAX'}
+                                    name={item.code + '[MAX]'}
+                                    onChange={changeValue}
+                                />
+                                <datalist id={item.code + '_MAX'}>
+                                    <option value={item.limits.min} label={item.limits.min}></option>
+                                    <option className="curValue" defaultValue={max} label={max}></option>
+                                    <option value={item.limits.max} label={item.limits.max}></option>
+                                </datalist>
+                            </div>
+                        </label>
+                    ))
+                }
+            </>
+        )
+    }
+
     return (
         <>
             <div className='searchPanel'>
@@ -52,7 +185,10 @@ export default function Search({ onChange, nameCollection }) {
             </div>
 
             <div className='modal'>
-                <div className='modal-head'>Фильтер <button onClick={toggleForm}></button></div>
+                <div className='modal-head'>Фильтр <button onClick={toggleForm}></button></div>
+                <form action="" method="GET">
+                    {renderFilter(schema)}
+                </form>
             </div>
 
             <div className='overlay' onClick={toggleForm}></div>

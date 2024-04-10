@@ -84,7 +84,8 @@ export default class MDB
     async getValue(options = {}) {
         if(!this.collection)
             return {};
-
+        
+        let unPreparedData;
         //дефолтный фильтр
         let filter = options.filter ? options.filter : {};
 
@@ -110,7 +111,30 @@ export default class MDB
             }
         }
 
-        let unPreparedData = await this.collection.find(filter).toArray();
+        //min & max
+        //this.collection.find().sort({ KEY : -1 }).limit(1).toArray();
+        //Сортировка
+        if(options.sort) {
+            if(options.sort.max) {
+                options.sort.key = -1;
+                options.sort.name = options.sort.max;
+            }
+
+            if(options.sort.min) {
+                options.sort.key = 1;
+                options.sort.name = options.sort.min;
+            }
+        }
+
+        if(options.sort && options.sort.key) {
+            let sort = {};
+            sort[options.sort.name] = options.sort.key;
+            unPreparedData = await this.collection.find().sort(sort).limit(1).toArray();
+        }
+        else {
+            unPreparedData = await this.collection.find(filter).toArray();
+        }
+
         let data = Controll.prepareData(unPreparedData, this.schema);
         let simId = {};
         let sim = {};
