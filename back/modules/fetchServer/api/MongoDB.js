@@ -85,6 +85,7 @@ export default class MDB
         if(!this.collection)
             return {};
         
+        let _this = this;
         let unPreparedData;
         //дефолтный фильтр
         let filter = options.filter ? options.filter : {};
@@ -126,6 +127,33 @@ export default class MDB
             }
         }
 
+        //custom filter
+        if(options.filter.filter === 'Y') {
+            filter = {};
+
+            for(let i in options.filter) {
+                let el = options.filter[i];
+                let from, to;
+
+                if(i === 'filter')
+                    continue;
+
+                switch(_this.schema[i].type) {
+                    case 'Number':
+                        from = parseInt(el.FROM);
+                        to = parseInt(el.TO);
+                    break;
+
+                    case 'Date':
+                        from = new Date(el.FROM);
+                        to = new Date(el.TO);
+                    break;
+                }
+                
+                filter[i] = { $gte: from , $lte: to }
+            }
+        }
+
         if(options.sort && options.sort.key) {
             let sort = {};
             sort[options.sort.name] = options.sort.key;
@@ -134,6 +162,7 @@ export default class MDB
         else {
             unPreparedData = await this.collection.find(filter).toArray();
         }
+
 
         let data = Controll.prepareData(unPreparedData, this.schema);
         let simId = {};

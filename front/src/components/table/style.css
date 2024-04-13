@@ -2,6 +2,7 @@
     margin:20px auto;
     border:0;
     width: calc(-400px + 100%);
+    height: fit-content;
 }
 
 .simple-table tr {

@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import config from '../../params/config.js';
 import './style.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { registerLocale } from  "react-datepicker";
+import { ru } from 'date-fns/locale/ru';
+registerLocale('ru-RU', ru)
 
 export default function Search({ onChange, nameCollection }) {
 
     const [schema, setSchema] = useState(null);
     const [min, setMin] = useState(0);
     const [max, setMax] = useState(0);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(null);
 
     useEffect(
         () => {
@@ -57,22 +64,26 @@ export default function Search({ onChange, nameCollection }) {
         overlay.classList.toggle('show');
     }
 
+    function onChangeDates(dates) {
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
+    };
+
     function changeValue(event) {
         let field = event.target;
         let parent = field.closest('label');
         let key = field.id.split('_');
 
         if(key[1] === 'MIN') {
-            let obSim = parent.querySelector('#' + key[0] + '_MAX');
-
-            if(obSim.value <= field.value) {
-                let maxValue = parseInt(field.value) + parseInt(obSim.step);
-
-                if(maxValue > parseInt(field.max)) {
-                    maxValue = parseInt(field.max);
-                }
-                setMax(maxValue);
-            }
+            //let obSim = parent.querySelector('#' + key[0] + '_MAX');
+            // if(obSim.value <= field.value) {
+            //     let maxValue = parseInt(field.value) + parseInt(obSim.step);
+            //     if(maxValue > parseInt(field.max)) {
+            //         maxValue = parseInt(field.max);
+            //     }
+            //     setMax(maxValue);
+            // }
 
             if(field.value >= field.max) {
                 setMin(parseInt(field.value) - parseInt(field.step));
@@ -83,16 +94,14 @@ export default function Search({ onChange, nameCollection }) {
         }
 
         if(key[1] === 'MAX') {
-            let obSim = parent.querySelector('#' + key[0] + '_MIN');
-
-            if(obSim.value >= field.value) {
-                let minValue = parseInt(field.value) - parseInt(obSim.step);
-
-                if(minValue > parseInt(field.min)) {
-                    minValue = parseInt(field.min);
-                }
-                setMin(minValue);
-            }
+            //let obSim = parent.querySelector('#' + key[0] + '_MIN');
+            // if(obSim.value >= field.value) {
+            //     let minValue = parseInt(field.value) - parseInt(obSim.step);
+            //     if(minValue > parseInt(field.min)) {
+            //         minValue = parseInt(field.min);
+            //     }
+            //     setMin(minValue);
+            // }
 
             if(field.value >= field.max) {
                 setMax(parseInt(field.value) + parseInt(field.step));
@@ -116,6 +125,10 @@ export default function Search({ onChange, nameCollection }) {
                         newRow.fieldType = 'number';
                         newRow.field = 'range';
                     break;
+
+                    case 'Date':
+                        newRow.field = 'datepicker';
+                    break;
                 }
                 
                 formElements.push(newRow);
@@ -126,48 +139,73 @@ export default function Search({ onChange, nameCollection }) {
             <>
                 {
                     formElements.map((item, index) => (
-                        <label key={index}>
-                            <span>{item.loc}</span>
-                            <div className="rangeGroup">
-                                от: <input 
-                                    type={item.field}
-                                    step={item.step ? item.step : null}
-                                    min={item.limits.min}
-                                    max={item.limits.max}
-                                    defaultValue={min}
-                                    value={min}
-                                    list={item.code + '_MIN'}
-                                    id={item.code + '_MIN'}
-                                    name={item.code + '[MIN]'}
-                                    onChange={changeValue}
-                                />
-                                <datalist id={item.code + '_MIN'}>
-                                    <option value={item.limits.min} label={item.limits.min}></option>
-                                    <option className="curValue" defaultValue={min} label={min}></option>
-                                    <option value={item.limits.max} label={item.limits.max}></option>
-                                </datalist>
-                            </div>
+                        <>
+                        {
+                            item.field === 'range' &&
+                            <div className='label' key={index}>
+                                <span>{item.loc}</span>
+                                <div className="rangeGroup">
+                                    от: <input 
+                                        type={item.field}
+                                        step={item.step ? item.step : null}
+                                        min={item.limits.min}
+                                        max={item.limits.max}
+                                        defaultValue={min}
+                                        value={min}
+                                        list={item.code + '_MIN'}
+                                        id={item.code + '_MIN'}
+                                        name={item.code + '[FROM]'}
+                                        onChange={changeValue}
+                                    />
+                                    <datalist id={item.code + '_MIN'}>
+                                        <option value={item.limits.min} label={item.limits.min}></option>
+                                        <option className="curValue" defaultValue={min} label={min}></option>
+                                        <option value={item.limits.max} label={item.limits.max}></option>
+                                    </datalist>
+                                </div>
 
-                            <div className="rangeGroup">
-                                до: <input 
-                                    type={item.field}
-                                    step={item.step ? item.step : null}
-                                    min={item.limits.min}
-                                    max={item.limits.max}
-                                    defaultValue={max}
-                                    value={max}
-                                    list={item.code + '_MAX'}
-                                    id={item.code + '_MAX'}
-                                    name={item.code + '[MAX]'}
-                                    onChange={changeValue}
-                                />
-                                <datalist id={item.code + '_MAX'}>
-                                    <option value={item.limits.min} label={item.limits.min}></option>
-                                    <option className="curValue" defaultValue={max} label={max}></option>
-                                    <option value={item.limits.max} label={item.limits.max}></option>
-                                </datalist>
+                                <div className="rangeGroup">
+                                    до: <input 
+                                        type={item.field}
+                                        step={item.step ? item.step : null}
+                                        min={item.limits.min}
+                                        max={item.limits.max}
+                                        defaultValue={max}
+                                        value={max}
+                                        list={item.code + '_MAX'}
+                                        id={item.code + '_MAX'}
+                                        name={item.code + '[TO]'}
+                                        onChange={changeValue}
+                                    />
+                                    <datalist id={item.code + '_MAX'}>
+                                        <option value={item.limits.min} label={item.limits.min}></option>
+                                        <option className="curValue" defaultValue={max} label={max}></option>
+                                        <option value={item.limits.max} label={item.limits.max}></option>
+                                    </datalist>
+                                </div>
                             </div>
-                        </label>
+                        }
+
+                        {
+                            item.field === 'datepicker' &&
+                            <div className="label" key={index}>
+                                <span>{item.loc}</span>
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={onChangeDates}
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    locale='ru-RU'
+                                    dateFormat='dd.MM.yyyy'
+                                    selectsRange
+                                    inline
+                                    />
+
+                                <input type='hidden' name={item.code + '[FROM]'} defaultValue={new Date(startDate)} />
+                                <input type='hidden' name={item.code + '[TO]'} defaultValue={new Date(endDate)} />
+                            </div>
+                        }
+                        </>
                     ))
                 }
             </>
@@ -188,6 +226,13 @@ export default function Search({ onChange, nameCollection }) {
                 <div className='modal-head'>Фильтр <button onClick={toggleForm}></button></div>
                 <form action="" method="GET">
                     {renderFilter(schema)}
+
+                    <input type='hidden' name='filter' value='Y'/>
+                    <div className='buttons'>
+                        <button>Фильтровать</button>
+                        <button>Сбросить</button>
+                    </div>
+                    
                 </form>
             </div>
 

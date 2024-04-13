@@ -11,17 +11,35 @@ export default function Table({nameTable, onChange, query = ''})
         sim: []
     });
     const [pie, setPie] = useState({});
-    const [loading, setLoading] = useState(false);    
+    const [loading, setLoading] = useState(false); 
+    const [order, setOrder] = useState('ASC');   
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
+        let getRequest = window.location.search;
         let urlRequest = config.api + 'get/' + nameTable + '/';
 
         if(query != '') {
             urlRequest += '?q=' + query;
         }
 
-        const response = await fetch(urlRequest);
+        if(getRequest != '' && query == '') {
+            urlRequest += getRequest;
+        }
+
+        await getFetch(urlRequest);
+        
+        setLoading(false);
+    }, [nameTable, onChange, query]);
+
+    useEffect(
+        () => {
+            fetchTable()
+        }, [fetchTable]
+    );
+
+    async function getFetch(url) {
+        const response = await fetch(url);
         const dataTable = await response.json();
         const data = {
             header: dataTable.schema,
@@ -39,18 +57,15 @@ export default function Table({nameTable, onChange, query = ''})
 
         setPie({title: title, budget: budget});
         setTable(data);
-        setLoading(false);
-    }, [nameTable, onChange, query]);
-
-    useEffect(
-        () => {
-            fetchTable()
-        }, [fetchTable]
-    );
+    }
 
     function getHeader(schema = {}) {
         let header = [];
         for(let i in schema) {
+            let obHeader = schema[i];
+
+            obHeader.code = i;
+
             if(i === '_id') {
                 header.push({loc: 'ID'});
             }
@@ -68,6 +83,8 @@ export default function Table({nameTable, onChange, query = ''})
                 {
                     header.map((item, index) => (
                         <th key={index}
+                            onClick={setSort}
+                            data-code={item.code}
                             className={item.sort ? 'sortable' : null}>
                             {item.loc}
                              
@@ -77,6 +94,20 @@ export default function Table({nameTable, onChange, query = ''})
                 }
             </tr>
         )
+    }
+
+    async function setSort(event) {
+        let code = event.target.dataset.code;
+        let url = config.api + 'get/' + nameTable + '/?sort=' + code + '&order=' + order;
+
+        await getFetch(url);
+
+        if(order === 'ASC') {
+            setOrder('DESC');
+        }
+        else {
+            setOrder('ASC');
+        }
     }
 
     function getContent(col, index, sim, schema) {

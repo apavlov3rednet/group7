@@ -32,6 +32,7 @@ app.get('/api/get/:CollectionName/', async (req, res) => {
     let options = {};
     let mdb = new FetchServer.MDB(collectionName);
 
+    console.log(collectionName, req.query);
     if(req.query) {
         options.filter = {};
         //get by id element
@@ -48,6 +49,12 @@ app.get('/api/get/:CollectionName/', async (req, res) => {
             options.sort = {};
             options.sort.min = req.query.min ? req.query.min : 0;
             options.sort.max = req.query.max ? req.query.max : 90000000000000;
+        }
+
+        if(req.query.filter === 'Y') {
+            for(let i in req.query) {
+                options.filter[i] = req.query[i];
+            }
         }
     }
 

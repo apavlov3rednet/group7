@@ -14,6 +14,7 @@ const services = {
         loc: 'Дата обращения',
         sort: true,
         editable: true,
+        filter: true
     },
     CARD: {
         type: 'DBRef',
@@ -56,7 +57,8 @@ const services = {
         fields: [
             'COUNT', 'PRICE'
         ],
-        mask: 'COUNT * PRICE'
+        mask: 'COUNT * PRICE',
+        filter: true
     }
        
     };

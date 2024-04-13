@@ -94,6 +94,7 @@ export default function Form({nameForm, arValue = {}}) {
                 case 'Hidden':
                 default:
                     newRow.fieldType = 'hidden';
+                    newRow.field = 'field';
                 break;
             }
 
