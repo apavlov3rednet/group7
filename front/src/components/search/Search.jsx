@@ -74,6 +74,7 @@ export default function Search({ onChange, nameCollection }) {
         let field = event.target;
         let parent = field.closest('label');
         let key = field.id.split('_');
+        let step = schema[key[0]].step;
 
         if(key[1] === 'MIN') {
             //let obSim = parent.querySelector('#' + key[0] + '_MAX');
@@ -86,7 +87,7 @@ export default function Search({ onChange, nameCollection }) {
             // }
 
             if(field.value >= field.max) {
-                setMin(parseInt(field.value) - parseInt(field.step));
+                setMin(parseInt(field.value) - step);
             }
             else {
                 setMin(field.value);
@@ -104,10 +105,11 @@ export default function Search({ onChange, nameCollection }) {
             // }
 
             if(field.value >= field.max) {
-                setMax(parseInt(field.value) + parseInt(field.step));
+                let value = parseInt(field.value) + step;
+                setMax(value);
             }
             else {
-                setMax(field.value);
+               setMax(field.value);
             }  
         }
     }

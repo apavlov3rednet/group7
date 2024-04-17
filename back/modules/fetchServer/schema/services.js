@@ -58,7 +58,8 @@ const services = {
             'COUNT', 'PRICE'
         ],
         mask: 'COUNT * PRICE',
-        filter: true
+        filter: true,
+        step: 10
     }
        
     };
