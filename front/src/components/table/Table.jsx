@@ -12,7 +12,6 @@ export default function Table({nameTable, onChange, query = ''})
     });
     const [pie, setPie] = useState({});
     const [loading, setLoading] = useState(false); 
-    const [order, setOrder] = useState('ASC');   
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
@@ -87,8 +86,6 @@ export default function Table({nameTable, onChange, query = ''})
                             data-code={item.code}
                             className={item.sort ? 'sortable' : null}>
                             {item.loc}
-                             
-                            {item.sort ? <span>::</span> : null}
                         </th>
                     ))
                 }
@@ -97,16 +94,24 @@ export default function Table({nameTable, onChange, query = ''})
     }
 
     async function setSort(event) {
+        let th = event.target;
+        let parent = th.closest('tr');
+        let allTh = parent.querySelectorAll('th');
+        let order = th.classList.contains('DESC') ? 'DESC' : 'ASC';
         let code = event.target.dataset.code;
         let url = config.api + 'get/' + nameTable + '/?sort=' + code + '&order=' + order;
+
+        th.classList.add(order);
 
         await getFetch(url);
 
         if(order === 'ASC') {
-            setOrder('DESC');
+            th.classList.add('DESC');
+            th.classList.remove('ASC');
         }
         else {
-            setOrder('ASC');
+            th.classList.remove('DESC');
+            th.classList.add('ASC');
         }
     }
 

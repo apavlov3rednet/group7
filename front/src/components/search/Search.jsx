@@ -212,6 +212,12 @@ export default function Search({ onChange, nameCollection }) {
         )
     }
 
+    function clearFilter(event) {
+        event.preventDefault();
+        let curPage = window.location;
+        document.location.href = curPage.origin + curPage.pathname;
+    }
+
     return (
         <>
             <div className='searchPanel'>
@@ -230,7 +236,7 @@ export default function Search({ onChange, nameCollection }) {
                     <input type='hidden' name='filter' value='Y'/>
                     <div className='buttons'>
                         <button>Фильтровать</button>
-                        <button>Сбросить</button>
+                        <button onClick={clearFilter}>Сбросить</button>
                     </div>
                     
                 </form>

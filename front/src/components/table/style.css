@@ -17,6 +17,24 @@
 
 .simple-table thead th.sortable {
     cursor: pointer;
+    position:relative;
+}
+
+.simple-table thead th.sortable:after {
+    content: ' ';
+    margin-left:5px;
+    width:10px;
+    display:inline-block
+}
+
+.simple-table thead th.sortable.ASC:after {
+    content: '⇑';
+    margin-left:5px;
+}
+
+.simple-table thead th.sortable.DESC:after {
+    content: '⇓';
+    margin-left:5px;
 }
 
 .simple-table tbody tr:nth-child(even) {
