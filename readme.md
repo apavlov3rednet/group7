@@ -19,4 +19,6 @@ a.pavlov@3red.net
     - https://www.mongodb.com/docs/ - MongoDB
     - https://nodejs.org/docs/latest/api/ - node.js
     - https://javascript.ru/ - на русском языке
-
+    Софт:
+    - https://www.mongodb.com/try/download/shell - шелл монгодб
+    - https://www.mongodb.com/try/download/compass - компасс монгодб (ГУИ)
