@@ -38,3 +38,22 @@ akk github apavlov3rednet
 6. back\params\config.js - прописать настройки сервера
 7. front\src\params\config.js - прописать настройки клиентской части
 8. back\modules\fetchServer\api\MongoDB.js - указать имя базы данных #DBNAME
+
+### Терминал
+Два терминала - front и back
+
+#### Back:
+Корень вашего проекта (/);
+Если не установлен node_modules
+npm i
+
+npm run dev - старт сервера бэка
+
+#### Front:
+От корня переходим в папку front
+cd front/
+
+Если не установлен node_modules
+npm i
+
+npm run start - для запуска клиентской части
