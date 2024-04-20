@@ -24,8 +24,17 @@ akk github apavlov3rednet
     - https://www.mongodb.com/try/download/shell - шелл монгодб
     - https://www.mongodb.com/try/download/compass - компасс монгодб (ГУИ)
 
-
 ### Скачиваем файлы
 - back/
 - front/
 - все файлы в корне
+
+### установка
+1. Открываете терминал в VSC
+2. npm i - установка серверной части
+3. cd front/ - переходим в папку фронт
+4. npm i - установка клиентской части
+5. Устанавливаем MongoDB Compass
+6. back\params\config.js - прописать настройки сервера
+7. front\src\params\config.js - прописать настройки клиентской части
+8. back\modules\fetchServer\api\MongoDB.js - указать имя базы данных #DBNAME
