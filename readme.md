@@ -8,24 +8,24 @@ akk github apavlov3rednet
     - В письме: телефон или акаунт телеграма
 3. Группа в телеграм
 4. Полезные ресурсы:
-    * Дизайн, идеи:
+    ### Дизайн, идеи:
     - https://www.behance.net/
     - dribbble.com
     - pinterest.com
     - https://www.flaticon.com/
-    * Модули и плагины:
+    ### Модули и плагины:
     - https://www.npmjs.com/
-    * Документация:
+    ### Документация:
     - https://developer.mozilla.org/ - MDN
     - https://www.mongodb.com/docs/ - MongoDB
     - https://nodejs.org/docs/latest/api/ - node.js
     - https://javascript.ru/ - на русском языке
-    * Софт:
+    ### Софт:
     - https://www.mongodb.com/try/download/shell - шелл монгодб
     - https://www.mongodb.com/try/download/compass - компасс монгодб (ГУИ)
 
 
-* Скачиваем файлы
+### Скачиваем файлы
 - back/
 - front/
 - все файлы в корне
