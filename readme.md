@@ -1,5 +1,7 @@
 a.pavlov@3red.net
-akk github apavlov3rednet
+> akk github apavlov3rednet
+
+### Порядок работы:
 
 1. Создать проект на гитхабе, публичный, или приватный но с доступом к проекту
 2. Пишите письмо. 
@@ -13,6 +15,7 @@ akk github apavlov3rednet
     - dribbble.com
     - pinterest.com
     - https://www.flaticon.com/
+    - https://color.adobe.com/ru/create/color-wheel 
     ### Модули и плагины:
     - https://www.npmjs.com/
     ### Документация:
@@ -24,12 +27,12 @@ akk github apavlov3rednet
     - https://www.mongodb.com/try/download/shell - шелл монгодб
     - https://www.mongodb.com/try/download/compass - компасс монгодб (ГУИ)
 
-### Скачиваем файлы
+### Скачиваем файлы:
 - back/
 - front/
 - все файлы в корне
 
-### установка
+### Установка:
 1. Открываете терминал в VSC
 2. npm i - установка серверной части
 3. cd front/ - переходим в папку фронт
