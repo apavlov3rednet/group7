@@ -45,15 +45,15 @@ akk github apavlov3rednet
 #### Back:
 Корень вашего проекта (/);
 Если не установлен node_modules
-npm i
+> npm i
 
-npm run dev - старт сервера бэка
+> npm run dev - старт сервера бэка
 
 #### Front:
 От корня переходим в папку front
-cd front/
+> cd front/
 
 Если не установлен node_modules
-npm i
+> npm i
 
-npm run start - для запуска клиентской части
+> npm run start - для запуска клиентской части
