@@ -1,0 +1,1 @@
+https://www.npmjs.com/package/react-simple-wysiwyg - визуальный редактор, смотрим From.jsx как подключать

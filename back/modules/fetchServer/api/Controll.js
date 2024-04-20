@@ -47,6 +47,15 @@ export default class Controll {
                     case 'DBRef':
                         data[i] = new DBRef(checkSchema.collection, new ObjectId(checkElement));
                     break;
+
+                    case 'Text':
+                        data[i] = checkElement;
+                    break;
+
+                    case 'File':
+                        console.log(checkElement)
+                        data[i] = checkElement;
+                    break;
                    }
                 }
                 else {

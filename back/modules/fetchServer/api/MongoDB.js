@@ -115,23 +115,22 @@ export default class MDB
         //min & max
         //this.collection.find().sort({ KEY : -1 }).limit(1).toArray();
         //Сортировка
-        if(options.sort) {
+        if(options.sort && Object.keys(options.sort).length > 0) {
             if(options.sort.max) {
                 options.sort.key = -1;
                 options.sort.name = options.sort.max;
-                options.sort.limit = 1;
+                options.limit = 1;
             }
 
             if(options.sort.min) {
                 options.sort.key = 1;
                 options.sort.name = options.sort.min;
-                options.sort.limit = 1;
+                options.limit = 1;
             }
 
             if(options.sort.field && options.sort.order) {
                 options.sort.key = (options.sort.order === 'ASC') ? 1 : -1;
                 options.sort.name = options.sort.field;
-                options.sort.limit = 100;
             }
         }
 
@@ -165,10 +164,19 @@ export default class MDB
         if(options.sort && options.sort.key) {
             let sort = {};
             sort[options.sort.name] = options.sort.key;
-            unPreparedData = await this.collection.find().sort(sort).limit(options.sort.limit).toArray();
+            unPreparedData = await this.collection
+                .find()
+                .sort(sort)
+                .limit(options.limit)
+                .skip(options.skip)
+                .toArray();
         }
         else {
-            unPreparedData = await this.collection.find(filter).toArray();
+            unPreparedData = await this.collection
+                .find(filter)
+                .limit(options.limit)
+                .skip(options.skip)
+                .toArray();
         }
 
 

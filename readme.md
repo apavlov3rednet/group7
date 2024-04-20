@@ -17,7 +17,7 @@ a.pavlov@3red.net
     - https://www.flaticon.com/
     - https://color.adobe.com/ru/create/color-wheel 
     ### Модули и плагины:
-    - https://www.npmjs.com/
+    - https://www.npmjs.com/ - [полезные](plugins.md)
     ### Документация:
     - https://developer.mozilla.org/ - MDN
     - https://www.mongodb.com/docs/ - MongoDB

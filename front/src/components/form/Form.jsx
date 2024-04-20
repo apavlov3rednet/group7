@@ -1,13 +1,23 @@
 import { useState, useEffect } from "react";
 import './style.css';
 import config from "../../params/config";
+
+//Редактор текста
+import Editor from 'react-simple-wysiwyg';
+
+//Маска телефона
 import InputMask from 'react-input-mask';
+
+//Загрузчик файлов
+import { UploadDropzone  } from "@bytescale/upload-widget-react";
+
+//Календарь
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 //import MaterialInput from '@material-ui/core/Input';
 import { registerLocale } from  "react-datepicker";
 import { ru } from 'date-fns/locale/ru';
-registerLocale('ru-RU', ru)
+registerLocale('ru-RU', ru);
 
 export default function Form({nameForm, arValue = {}}) {
     //const shemaForm = schema[nameForm];
@@ -18,6 +28,15 @@ export default function Form({nameForm, arValue = {}}) {
     const [edit, setEdit] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const [startDate, setStartDate] = useState(new Date());
+    const [html, setHtml] = useState('');
+
+    const optionsUploader = {
+        apiKey: "public_12a1yvcFRwEvpKhtouWACiisE9XS", // Get API keys from: www.bytescale.com
+        maxFileCount: 1,
+        path: {                          
+            folderPath: "/uploads"        // Please refer to docs for all path variables.
+        },
+    };
 
     useEffect(
         () => {
@@ -52,6 +71,7 @@ export default function Form({nameForm, arValue = {}}) {
 
     function renderForm(data = {}, ar = {}, rand = 0) {
         let formElements = [];
+        
 
         for(let i in data) {
             let newRow = data[i];
@@ -91,6 +111,18 @@ export default function Form({nameForm, arValue = {}}) {
                     newRow.field = 'date';
                 break;
 
+                case 'Text':
+                    newRow.fieldType = 'text';
+                    newRow.field = 'text';
+                    if(newRow.value != '')
+                    setHtml(newRow.value);
+                break;
+
+                case 'File':
+                    newRow.fieldType = 'file';
+                    newRow.field = 'file';
+                break;
+
                 case 'Hidden':
                 default:
                     newRow.fieldType = 'hidden';
@@ -115,6 +147,24 @@ export default function Form({nameForm, arValue = {}}) {
                                     readOnly={item.readOnly && true}
                                     step={(item.fieldType === 'number') ? item.step : null}
                                     name={item.code} />
+                            }
+
+                            {
+                                item.field === 'text' && <>
+                                    <Editor 
+                                    value={html} 
+                                    onChange={onChangeHTML} />
+                                    <textarea name={item.code}
+                                        className='hidden' defaultValue={html}>
+                                            
+                                    </textarea>
+                                
+                                </>
+                            }
+
+                            {
+                                item.field === 'file' && 
+                                <input type="file" name={item.code} />
                             }
 
                             {
@@ -213,16 +263,23 @@ export default function Form({nameForm, arValue = {}}) {
             setDisabled(false);
     }
 
+    function onChangeHTML(e) {
+        setHtml(e.target.value);
+    }
+
     return (
         
-        <form method="POST" action={url} onChange={checkRequired} className='editForm'>
+        <form method="POST" enctype="multipart/form-data" action={url} onChange={checkRequired} className={nameForm + ' editForm'}>
             {renderForm(schema, formValue) }
 
-            <button disabled={disabled && disabled}>
-                {!edit && 'Сохранить'}
-                {edit && 'Изменить'}
-            </button>
-            <button onClick={resetForm}>Сбросить</button>
+            <div className='buttons'>
+                <button disabled={disabled && disabled}>
+                    {!edit && 'Сохранить'}
+                    {edit && 'Изменить'}
+                </button>
+                <button onClick={resetForm}>Сбросить</button>
+            </div>
+            
         </form>
     )
 }

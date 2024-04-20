@@ -1,4 +1,5 @@
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import morgan from 'morgan';
 import FetchServer from './back/modules/fetchServer/index.js';
 import schema from './back/modules/fetchServer/schema/index.js';
@@ -10,12 +11,13 @@ const app = express();
 
 const PORT = 8000;
 
-app.use(morgan(':method :url :status :res[content-lenght] - :response-time ms'));
+//app.use(morgan(':method :url :status :res[content-lenght] - :response-time ms'));
 
 // Методы для работы от сервера с публичной частью
 //app.set('back', 'back');
 app.use(express.urlencoded({ extended: true }));
-//app.use(static(`back`));
+app.use(fileUpload({}));
+app.use(express.static('front/src/uploads'));
 
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -32,9 +34,12 @@ app.get('/api/get/:CollectionName/', async (req, res) => {
     let options = {};
     let mdb = new FetchServer.MDB(collectionName);
 
-    console.log(collectionName, req.query);
     if(req.query) {
         options.filter = {};
+        options.sort = {};
+        options.limit = 100;
+        options.skip = 0;
+
         //get by id element
         if(req.query.id) {
             options.filter._id = new ObjectId(req.query.id);
@@ -46,13 +51,11 @@ app.get('/api/get/:CollectionName/', async (req, res) => {
         }
 
         if(req.query.min || req.query.max) {
-            options.sort = {};
             options.sort.min = req.query.min ? req.query.min : 0;
             options.sort.max = req.query.max ? req.query.max : 90000000000000;
         }
 
         if(req.query.sort && req.query.order) {
-            options.sort = {};
             options.sort.field = req.query.sort;
             options.sort.order = req.query.order;
         }
@@ -86,8 +89,18 @@ app.get('/api/get/schema/:Name/', async (req, res) => {
 app.post('/api/post/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     let mdb = new FetchServer.MDB(collectionName);
+    let query = req.body;
 
-    const result = await mdb.setValue(req.body);
+    if(req.files) {
+        for(let i in req.files) {
+            let file = req.files[i];
+            let fileName = 'uploads/'+file.name;
+            file.mv('front/src/' + fileName);
+            query[i] = fileName;
+        }
+    }
+
+    const result = await mdb.setValue(query);
 
     if(result.acknowledged) {
         let newUrl = config.client + collectionName + '?id=' + String(result.insertedId);
