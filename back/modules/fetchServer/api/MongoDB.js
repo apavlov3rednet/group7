@@ -11,7 +11,7 @@ export default class MDB
     static #DBNAME = 'group7';
 
     constructor(collectionName = '') {
-        console.log('start DB connect');
+        //console.log('start DB connect');
         const url = [MDB.#LOCATION, MDB.#PORT].join(':') + '/';
         this.client = new MongoClient(url);
         this.client.connect();
@@ -23,7 +23,7 @@ export default class MDB
             this.controll = new Controll(collectionName);
         }
         
-        console.log('DB connect success');
+        //console.log('DB connect success');
     }
 
     changeCollection(collectionName) {
