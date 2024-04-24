@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import './style.css';
+import './newslist.css';
 import config from '../../params/config';
 
 export default function NewsList({limit, paginator = false}) {
@@ -16,16 +16,19 @@ export default function NewsList({limit, paginator = false}) {
     );
 
     return (
+        <>
+        <h2>Новости</h2>
         <div className='news-list'>   
             {
                 news && news.map(el => (
                     <div className='news-card'>
-                        <img src={'../../' + el.PICTURE} alt={el.TITLE} />
-                        <h3>{el.TITLE}</h3>
+                        <img src={'./' + el.PICTURE} alt={el.TITLE} />
+                        <h3><a href={'/news/' + el.CODE}>{el.TITLE}</a></h3>
                         <span>{el.ANOUNCE}</span>
                     </div>
                 ))
             }
         </div>
+        </>
     )
 }

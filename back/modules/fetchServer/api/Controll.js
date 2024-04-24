@@ -35,6 +35,7 @@ export default class Controll {
                     case "String":
                         case 'Phone':
                             case 'Email':
+                                case 'Simbol':
                         data[i] = String(checkElement);
                     break;
 
@@ -53,7 +54,6 @@ export default class Controll {
                     break;
 
                     case 'File':
-                        console.log(checkElement)
                         data[i] = checkElement;
                     break;
                    }

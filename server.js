@@ -16,8 +16,10 @@ const PORT = 8000;
 // Методы для работы от сервера с публичной частью
 //app.set('back', 'back');
 app.use(express.urlencoded({ extended: true }));
+//Поддержка загрузки файлов
 app.use(fileUpload({}));
-app.use(express.static('front/src/uploads'));
+//Открытие доступа к папке куда будут грузиться файлы
+app.use(express.static('front/public/uploads'));
 
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -91,11 +93,12 @@ app.post('/api/post/:CollectionName/', async (req, res) => {
     let mdb = new FetchServer.MDB(collectionName);
     let query = req.body;
 
+    //Загрузка файла если он есть
     if(req.files) {
         for(let i in req.files) {
             let file = req.files[i];
             let fileName = 'uploads/'+file.name;
-            file.mv('front/src/' + fileName);
+            file.mv('front/public/' + fileName);
             query[i] = fileName;
         }
     }

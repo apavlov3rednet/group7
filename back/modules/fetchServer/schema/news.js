@@ -9,6 +9,14 @@ const news = {
         sort: false,
         editable: true,
     },
+    CODE: {
+        type: "Simbol",
+        require: true,
+        default: '',
+        loc: 'Символьный код новости',
+        sort: false,
+        editable: true,
+    },
     ANOUNCE: {
         //goverment number
         type: "String",

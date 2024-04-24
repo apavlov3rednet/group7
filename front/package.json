@@ -16,6 +16,7 @@
     "react-input-mask": "^2.0.4",
     "react-scripts": "5.0.1",
     "react-simple-wysiwyg": "^3.0.2",
+    "transliter": "^2.2.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
