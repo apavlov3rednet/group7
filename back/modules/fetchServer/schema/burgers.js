@@ -27,7 +27,7 @@ const burgers = {
         ],
         sort: false,
         editable: true,
-        searchable: falses
+        searchable: false
     },
     TEXT: {
         type: "Text",
@@ -46,3 +46,5 @@ const burgers = {
         filter: false,
     },
 }
+
+export default burgers;

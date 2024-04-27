@@ -9,6 +9,7 @@ export default function Container({ curPath }) {
     const [row, setRow] = useState({});
     const [query, setQuery] = useState("");
     const [collectionName, setCollectionName] = useState(false);
+    console.log(curPath)
 
     const handle = (value) => {
         if (value.data) setRow(value.data[0]);

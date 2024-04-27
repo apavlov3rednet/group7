@@ -74,6 +74,16 @@ app.get('/api/get/:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
+app.get('/api/get/news/:detail/', async(req, res) => {
+    let mdb = new FetchServer.MDB('news');
+    let options = {};
+
+    options.filter.CODE = req.params.detail;
+    let result = await mdb.getValue(options);
+
+    res.end(JSON.stringify(result));
+});
+
 app.get('/api/get/collection/list/', async(req, res) => {
     let mdb = new FetchServer.MDB();
     await mdb.getCollectionStats().then(result => {

@@ -9,7 +9,7 @@ import Editor from "react-simple-wysiwyg";
 import InputMask from "react-input-mask";
 
 //Транслитер
-import { transliter, slugify, isCyrillic } from "transliter";
+import { transliter, slugify, isCyrillic } from "transliter"; //npm i transliter --save
 
 //Календарь
 import DatePicker from "react-datepicker";
@@ -108,6 +108,12 @@ export default function Form({ nameForm, arValue = {} }) {
                     newRow.field = "text";
                     break;
 
+                case "List":
+                    newRow.fieldType = 'select';
+                    newRow.field = 'simpleselect';
+                    newRow.list = renderSimpleSelect(schema);
+                break;
+
                 case "File":
                     newRow.fieldType = "file";
                     newRow.field = "file";
@@ -177,6 +183,12 @@ export default function Form({ nameForm, arValue = {} }) {
                             <select name={item.code}>{item.list}</select>
                         )}
 
+                        {/* {
+                            item.field === 'simpleselect' && (
+                                <select name={item.code}>{item.list}</select>
+                            )
+                        } */}
+
                         {item.field === "date" && (
                             <DatePicker
                                 selected={startDate}
@@ -194,13 +206,15 @@ export default function Form({ nameForm, arValue = {} }) {
         );
     }
 
+    function renderSimpleSelect(schema) {
+        console.log(schema);
+        return [];
+    }
+
     function nameSimbol(event) {
         let form = event.target.closest("form");
-        let name = event.target.name;
         let codeField = form.querySelector("input[name=CODE]");
-
-        let translit = slugify(event.target.value, "_");
-        codeField.value = translit;
+        codeField.value = slugify(event.target.value, "_");
     }
 
     function callMethod(event) {
