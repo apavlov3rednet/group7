@@ -5,5 +5,6 @@ import owners from "./owners.js";
 import cards from "./cards.js";
 import services from './services.js';
 import news from "./news.js";
+import burgers from './burgers.js'
 
-export default {brands, menu, models, owners, cards, services, news};
+export default {brands, menu, models, owners, cards, services, news, burgers};
