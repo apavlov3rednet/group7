@@ -38,14 +38,22 @@ export default function Container({ curPath }) {
             {collectionName && (
                 <Form arValue={row} nameForm={collectionName}></Form>
             )}
-            {collectionName && (
-                <Table
-                    onChange={handle}
-                    nameTable={collectionName}
-                    query={query}
-                ></Table>
-            )}
-            {!collectionName && <Index />}
+            {
+                //если есть коллекция то выводим относительно коллекции
+                collectionName && ( // collectionName === 'collection_name'
+                    <Table
+                        onChange={handle}
+                        nameTable={collectionName}
+                        query={query}
+                    ></Table>
+                )
+            }
+
+            
+            {
+                //Если нет названия коллекции, то выводим индексную страницу
+            !collectionName && <Index />
+            }
         </div>
     );
 }
