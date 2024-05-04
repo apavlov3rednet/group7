@@ -14,6 +14,12 @@ import { transliter, slugify, isCyrillic } from "transliter"; //npm i transliter
 //Календарь
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+//rating
+import { Rating, ThinStar } from '@smastrom/react-rating';
+import '@smastrom/react-rating/style.css';
+
+
 //import MaterialInput from '@material-ui/core/Input';
 import { registerLocale } from "react-datepicker";
 import { ru } from "date-fns/locale/ru";
@@ -29,6 +35,13 @@ export default function Form({ nameForm, arValue = {} }) {
     const [disabled, setDisabled] = useState(true);
     const [startDate, setStartDate] = useState(new Date());
     const [html, setHtml] = useState("");
+    const [rating, setRating] = useState(0);
+
+    const myStyles = {
+        itemShapes: ThinStar,
+        activeFillColor: '#ffb700',
+        inactiveFillColor: '#fbf1a9'
+      };
 
     useEffect(() => {
         async function fetchSchema() {
@@ -119,11 +132,18 @@ export default function Form({ nameForm, arValue = {} }) {
                     newRow.field = "file";
                     break;
 
+                    case "Rating":
+                        newRow.fieldType = 'rating';
+                        newRow.field = "rating";
+                    break;
+
                 case "Hidden":
                 default:
                     newRow.fieldType = "hidden";
                     newRow.field = "field";
                     break;
+
+                    
             }
 
             formElements.push(newRow);
@@ -152,6 +172,13 @@ export default function Form({ nameForm, arValue = {} }) {
                                 name={item.code}
                             />
                         )}
+
+                        {item.field === 'rating' && 
+                            <>
+                            <Rating style={{ maxWidth: 300 }} value={rating} onChange={setRating} itemStyles={myStyles} />
+                            <input type='hidden' name={item.code} defaultValue={rating}/>
+                            </>
+                        }
 
                         {item.field === "text" && (
                             <>
