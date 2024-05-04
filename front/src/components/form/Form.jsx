@@ -165,9 +165,9 @@ export default function Form({ nameForm, arValue = {} }) {
                                 onKeyUp={item.code === "TITLE" && nameSimbol}
                                 readOnly={item.readOnly && true}
                                 step={
-                                    item.fieldType === "number"
+                                    item.step > 0
                                         ? item.step
-                                        : null
+                                        : 'any'
                                 }
                                 name={item.code}
                             />
@@ -241,7 +241,8 @@ export default function Form({ nameForm, arValue = {} }) {
     function nameSimbol(event) {
         let form = event.target.closest("form");
         let codeField = form.querySelector("input[name=CODE]");
-        codeField.value = slugify(event.target.value, "_");
+        if(codeField)
+            codeField.value = slugify(event.target.value, "_");
     }
 
     function callMethod(event) {
