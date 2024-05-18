@@ -66,10 +66,7 @@ export default function Table({nameTable, onChange, query = ''})
 
             obHeader.code = i;
 
-            if(i === '_id') {
-                header.push({loc: 'ID'});
-            }
-            else {
+            if(i !== '_id') {
                 header.push(schema[i]);
             }
 
@@ -116,6 +113,7 @@ export default function Table({nameTable, onChange, query = ''})
 
     function getContent(col, index, sim, schema) {
         let value = '';
+        let curSchema = 0;
 
         if(col.ref) {
             let val = sim[col.collectionName].filter(item => item._id === col._id)[0];
@@ -127,7 +125,7 @@ export default function Table({nameTable, onChange, query = ''})
             value = col;
 
             let getIndex = 0;
-            let curSchema = 0;
+            
             for(let i in schema) {
                 if(getIndex === index) {
                     curSchema = schema[i];
@@ -152,9 +150,10 @@ export default function Table({nameTable, onChange, query = ''})
         }
 
         return (
-            <td key={index}>
-                {value && value}
-            </td>
+                curSchema.code !== '_id' && 
+                <td key={index}>
+                    {value && value}
+                </td>
         )
     }
 
