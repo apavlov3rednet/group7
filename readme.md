@@ -16,6 +16,7 @@ a.pavlov@3red.net
     - pinterest.com
     - https://www.flaticon.com/
     - https://color.adobe.com/ru/create/color-wheel 
+    - https://gradients.app/ru/newpalette - подбор цвета по картинке
     ### Модули и плагины:
     - https://www.npmjs.com/ - [полезные](plugins.md)
     ### Документация:
